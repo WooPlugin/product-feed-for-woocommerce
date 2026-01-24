@@ -1,14 +1,15 @@
-name: Build Release ZIP
+name: Release
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,10 +22,7 @@ jobs:
 
       - name: Create plugin ZIP
         run: |
-          # Create temp directory with correct plugin name
           mkdir -p build/product-feed-for-woocommerce
-
-          # Copy plugin files (exclude dev files and wporg assets)
           rsync -av --exclude='.git' \
                     --exclude='.github' \
                     --exclude='.wordpress-org' \
@@ -37,14 +35,13 @@ jobs:
                     --exclude='node_modules' \
                     --exclude='.DS_Store' \
                     ./ build/product-feed-for-woocommerce/
-
-          # Create ZIP
           cd build
           zip -r product-feed-for-woocommerce.zip product-feed-for-woocommerce
 
-      - name: Upload ZIP to release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: build/product-feed-for-woocommerce.zip
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
