@@ -5,7 +5,7 @@ Tags: google shopping, product feed, woocommerce feed, google merchant center, g
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -175,6 +175,9 @@ Pro: Scheduled updates, auto-sync on product changes, multi-channel feeds, prior
 3. Dashboard with feed status and statistics
 
 == Changelog ==
+
+= 1.0.1 =
+* Add WordPress.org review request notice (shows after 7 days of use)
 
 = 1.0.0 =
 * Initial release
