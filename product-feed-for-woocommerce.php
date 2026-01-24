@@ -87,6 +87,7 @@ function gswc_init() {
     require_once GSWC_PLUGIN_DIR . 'includes/class-feed-generator.php';
     require_once GSWC_PLUGIN_DIR . 'includes/class-admin.php';
     require_once GSWC_PLUGIN_DIR . 'includes/class-review-notice.php';
+    require_once GSWC_PLUGIN_DIR . 'includes/class-pro-upgrader.php';
 
     // Initialize components
     GSWC_Settings::init();
@@ -94,6 +95,7 @@ function gswc_init() {
     GSWC_Feed_Generator::init();
     GSWC_Admin::init();
     GSWC_Review_Notice::init();
+    GSWC_Pro_Upgrader::init();
 }
 add_action('plugins_loaded', 'gswc_init');
 

@@ -170,6 +170,13 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
         </div>
     </div>
 
+    <?php
+    // Show upgrade UI if Pro is not active
+    if (!GSWC_Pro_Upgrader::is_pro_active()) {
+        GSWC_Pro_Upgrader::render_upgrade_ui();
+    }
+    ?>
+
     <p class="gswc-footer">
         Google Shopping for WooCommerce v<?php echo esc_html(GSWC_VERSION); ?> &middot;
         <a href="https://wooplugin.pro/google-shopping-pro" target="_blank">wooplugin.pro</a>
