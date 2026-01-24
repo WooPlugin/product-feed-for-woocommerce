@@ -186,7 +186,11 @@ class GSWC_Pro_Upgrader {
         $activate_result = activate_plugin(self::PRO_PLUGIN_SLUG);
         if (is_wp_error($activate_result)) {
             wp_send_json_success([
-                'message'   => __('Pro installed! Please activate it manually.', 'gtin-product-feed-for-google-shopping'),
+                'message'   => sprintf(
+                    /* translators: %s: error message */
+                    __('Pro installed but activation failed: %s', 'gtin-product-feed-for-google-shopping'),
+                    $activate_result->get_error_message()
+                ),
                 'activated' => false,
             ]);
         }
@@ -221,7 +225,6 @@ class GSWC_Pro_Upgrader {
         }
 
         $nonce = wp_create_nonce('gswc_pro_upgrade');
-        $pending_license = get_option('gswc_pending_license_key', '');
         ?>
         <div class="gswc-card gswc-upgrade-card">
             <h2><?php esc_html_e('Upgrade to Pro', 'gtin-product-feed-for-google-shopping'); ?></h2>
@@ -240,8 +243,7 @@ class GSWC_Pro_Upgrader {
                     <input type="text"
                            id="gswc-license-key"
                            class="gswc-license-input"
-                           placeholder="<?php esc_attr_e('Enter license key...', 'gtin-product-feed-for-google-shopping'); ?>"
-                           value="<?php echo esc_attr($pending_license); ?>" />
+                           placeholder="<?php esc_attr_e('Enter license key...', 'gtin-product-feed-for-google-shopping'); ?>" />
                     <button type="button" id="gswc-validate-license" class="button button-primary">
                         <?php esc_html_e('Validate & Install Pro', 'gtin-product-feed-for-google-shopping'); ?>
                     </button>
