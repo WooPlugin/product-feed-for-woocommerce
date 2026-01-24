@@ -235,7 +235,7 @@ class GSWC_Admin {
                                 $products_changed,
                                 'gtin-product-feed-for-google-shopping'
                             )),
-                            $products_changed
+                            (int) $products_changed
                         );
                         ?>
                     </span>
