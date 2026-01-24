@@ -24,9 +24,10 @@ jobs:
           # Create temp directory with correct plugin name
           mkdir -p build/product-feed-for-woocommerce
 
-          # Copy plugin files (exclude dev files)
+          # Copy plugin files (exclude dev files and wporg assets)
           rsync -av --exclude='.git' \
                     --exclude='.github' \
+                    --exclude='.wordpress-org' \
                     --exclude='.gitignore' \
                     --exclude='composer.json' \
                     --exclude='composer.lock' \
