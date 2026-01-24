@@ -1,0 +1,531 @@
+/**
+ * Google Shopping for WooCommerce Admin Styles
+ *
+ * @package Google_Shopping_For_WooCommerce
+ */
+
+/* ==========================================================================
+   Header & Branding
+   ========================================================================== */
+
+.gswc-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 23px;
+    font-weight: 400;
+    margin: 20px 0;
+}
+
+.gswc-logo {
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.gswc-brand {
+    font-size: 12px;
+    font-weight: 400;
+    color: #9ca3af;
+    text-decoration: none;
+    margin-left: auto;
+}
+
+.gswc-brand:hover {
+    color: #4285f4;
+}
+
+/* ==========================================================================
+   Stats Grid
+   ========================================================================== */
+
+.gswc-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.gswc-stat-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: box-shadow 0.2s ease;
+}
+
+.gswc-stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.gswc-stat-card .stat-number {
+    display: block;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #1e1e1e;
+}
+
+.gswc-stat-card .stat-label {
+    font-weight: 500;
+    color: #6b7280;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+
+.gswc-stat-card.success {
+    border-color: #16a34a;
+    border-width: 2px;
+}
+
+.gswc-stat-card.success .stat-number {
+    color: #16a34a;
+}
+
+@media screen and (max-width: 1200px) {
+    .gswc-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .gswc-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   Cards
+   ========================================================================== */
+
+.gswc-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+    align-items: start;
+}
+
+.gswc-cards-grid .gswc-card {
+    margin-bottom: 0;
+    min-width: 0;
+}
+
+@media screen and (max-width: 782px) {
+    .gswc-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.gswc-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.gswc-card h2 {
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #1e1e1e;
+}
+
+/* ==========================================================================
+   Notices
+   ========================================================================== */
+
+.gswc-notice {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.gswc-notice.success {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.gswc-notice.warning {
+    background: #fef9c3;
+    color: #854d0e;
+    border: 1px solid #fde68a;
+}
+
+.gswc-notice.info {
+    background: #e0f2fe;
+    color: #075985;
+    border: 1px solid #bae6fd;
+}
+
+.gswc-notice.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.gswc-notice a {
+    color: inherit;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Info Table
+   ========================================================================== */
+
+.gswc-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    table-layout: fixed;
+}
+
+.gswc-info-table th,
+.gswc-info-table td {
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left;
+}
+
+.gswc-info-table th {
+    width: 120px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.gswc-info-table td {
+    overflow: hidden;
+}
+
+.gswc-info-table tr:last-child th,
+.gswc-info-table tr:last-child td {
+    border-bottom: none;
+}
+
+.gswc-feed-url-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gswc-feed-url-input {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-family: monospace;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f9f9f9;
+}
+
+.gswc-feed-url-input:focus {
+    outline: none;
+    border-color: #4285f4;
+    background: #fff;
+}
+
+.gswc-feed-url a {
+    text-decoration: none;
+    color: #4285f4;
+}
+
+.gswc-feed-url a:hover {
+    text-decoration: underline;
+}
+
+.gswc-copy-url {
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Actions
+   ========================================================================== */
+
+.gswc-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.gswc-actions .spinner {
+    float: none;
+    margin: 0;
+}
+
+#gswc-feed-result {
+    margin-left: auto;
+    font-weight: 500;
+}
+
+#gswc-feed-result.success {
+    color: #16a34a;
+}
+
+#gswc-feed-result.error {
+    color: #dc2626;
+}
+
+/* Primary button styling */
+.gswc-card .button-primary {
+    background: #4285f4;
+    border-color: #4285f4;
+    color: #fff;
+}
+
+.gswc-card .button-primary:hover,
+.gswc-card .button-primary:focus {
+    background: #3367d6;
+    border-color: #3367d6;
+    color: #fff;
+}
+
+/* ==========================================================================
+   Steps
+   ========================================================================== */
+
+.gswc-steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+}
+
+.gswc-steps li {
+    position: relative;
+    padding-left: 48px;
+    margin-bottom: 20px;
+    counter-increment: step;
+}
+
+.gswc-steps li:last-child {
+    margin-bottom: 0;
+}
+
+.gswc-steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.gswc-steps li strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.gswc-steps li p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.gswc-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.gswc-footer a {
+    color: #4285f4;
+    text-decoration: none;
+}
+
+.gswc-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   Product Fields
+   ========================================================================== */
+
+.gswc-fields {
+    margin-top: 15px;
+}
+
+.gswc-fields .form-field-group-title {
+    font-size: 13px;
+    color: #1e1e1e;
+}
+
+.gswc-variation-fields {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    margin-top: 10px;
+}
+
+/* ==========================================================================
+   Dialog (native HTML dialog element)
+   ========================================================================== */
+
+.gswc-dialog {
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 450px;
+    width: calc(100% - 40px);
+}
+
+.gswc-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.gswc-dialog-header {
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+    color: #fff;
+    padding: 16px 20px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.gswc-dialog-content {
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #374151;
+}
+
+.gswc-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 20px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* ==========================================================================
+   Dashboard Promotion Banner
+   ========================================================================== */
+
+.gswc-dashboard-promo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.gswc-promo-highlight {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border: 1px solid #3b82f6;
+}
+
+.gswc-promo-urgent {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    border: 1px solid #ef4444;
+}
+
+.gswc-promo-subtle {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    border: 1px solid #9ca3af;
+}
+
+.gswc-promo-content {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.gswc-dashboard-promo .gswc-promo-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gswc-promo-highlight .gswc-promo-badge {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.gswc-promo-urgent .gswc-promo-badge {
+    background: #ef4444;
+    color: #fff;
+}
+
+.gswc-promo-subtle .gswc-promo-badge {
+    background: #6b7280;
+    color: #fff;
+}
+
+.gswc-dashboard-promo .gswc-promo-message {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.gswc-promo-code-inline {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.gswc-promo-code-inline code {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.gswc-dashboard-promo .button-primary {
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #4285f4, #34a853);
+    border: none;
+    padding: 8px 20px;
+}
+
+.gswc-dashboard-promo .button-primary:hover {
+    opacity: 0.9;
+}
+
+@media screen and (max-width: 600px) {
+    .gswc-dashboard-promo {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gswc-promo-content {
+        margin-bottom: 10px;
+    }
+}

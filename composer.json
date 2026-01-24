@@ -1,0 +1,14 @@
+{
+    "name": "wooplugin/product-feed-google-shopping",
+    "description": "Add GTIN, Brand, MPN fields to WooCommerce products. Generate Google Merchant Center feeds.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.0",
+        "yahnis-elsts/plugin-update-checker": "^5.4"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}
