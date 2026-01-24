@@ -147,6 +147,29 @@ class GSWC_Pro_Upgrader {
         require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
         require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 
+        // Define quiet skin class if not already defined
+        if (!class_exists('GSWC_Quiet_Upgrader_Skin')) {
+            class GSWC_Quiet_Upgrader_Skin extends WP_Upgrader_Skin {
+                private $errors = [];
+
+                public function header() {}
+                public function footer() {}
+                public function feedback($feedback, ...$args) {}
+
+                public function error($errors) {
+                    if (is_wp_error($errors)) {
+                        $this->errors = array_merge($this->errors, $errors->get_error_messages());
+                    } elseif (is_string($errors)) {
+                        $this->errors[] = $errors;
+                    }
+                }
+
+                public function get_errors() {
+                    return $this->errors;
+                }
+            }
+        }
+
         // Use custom skin to capture output
         $skin = new GSWC_Quiet_Upgrader_Skin();
         $upgrader = new Plugin_Upgrader($skin);
@@ -369,28 +392,5 @@ class GSWC_Pro_Upgrader {
             }
         </style>
         <?php
-    }
-}
-
-/**
- * Quiet upgrader skin that captures errors
- */
-class GSWC_Quiet_Upgrader_Skin extends WP_Upgrader_Skin {
-    private $errors = [];
-
-    public function header() {}
-    public function footer() {}
-    public function feedback($feedback, ...$args) {}
-
-    public function error($errors) {
-        if (is_wp_error($errors)) {
-            $this->errors = array_merge($this->errors, $errors->get_error_messages());
-        } elseif (is_string($errors)) {
-            $this->errors[] = $errors;
-        }
-    }
-
-    public function get_errors() {
-        return $this->errors;
     }
 }
