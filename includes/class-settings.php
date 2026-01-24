@@ -94,7 +94,6 @@ class GSWC_Settings {
         }
 
         $nonce = wp_create_nonce('gswc_pro_upgrade');
-        $pending_license = get_option('gswc_pending_license_key', '');
         ?>
         <div class="gswc-sidebar-card gswc-license-card">
             <h3><?php esc_html_e('Have a License?', 'gtin-product-feed-for-google-shopping'); ?></h3>
@@ -103,8 +102,7 @@ class GSWC_Settings {
             <input type="text"
                    id="gswc-license-key-sidebar"
                    class="gswc-license-input-sidebar"
-                   placeholder="<?php esc_attr_e('License key...', 'gtin-product-feed-for-google-shopping'); ?>"
-                   value="<?php echo esc_attr($pending_license); ?>" />
+                   placeholder="<?php esc_attr_e('License key...', 'gtin-product-feed-for-google-shopping'); ?>" />
             <button type="button" id="gswc-validate-license-sidebar" class="button button-primary">
                 <?php esc_html_e('Install Pro', 'gtin-product-feed-for-google-shopping'); ?>
             </button>
