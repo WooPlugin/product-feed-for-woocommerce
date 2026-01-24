@@ -35,7 +35,7 @@ define('GSWC_PRO_URL', 'https://wooplugin.pro/google-shopping-pro');
 // GitHub update checker
 if (class_exists(YahnisElsts\PluginUpdateChecker\v5\PucFactory::class)) {
     $gswc_update_checker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
-        'https://github.com/wooplugin/product-feed-for-woocommerce/',
+        'https://github.com/WooPlugin/product-feed-for-woocommerce/',
         __FILE__,
         'product-feed-for-woocommerce'
     );
