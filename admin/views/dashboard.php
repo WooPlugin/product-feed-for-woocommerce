@@ -69,6 +69,13 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
         </div>
     </div>
 
+    <?php
+    // Show upgrade UI if Pro is not active
+    if (!GSWC_Pro_Upgrader::is_pro_active()) {
+        GSWC_Pro_Upgrader::render_upgrade_ui();
+    }
+    ?>
+
     <div class="gswc-cards-grid">
         <div class="gswc-card">
             <h2><?php esc_html_e('Feed Status', 'gtin-product-feed-for-google-shopping'); ?></h2>
@@ -169,13 +176,6 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
             </ol>
         </div>
     </div>
-
-    <?php
-    // Show upgrade UI if Pro is not active
-    if (!GSWC_Pro_Upgrader::is_pro_active()) {
-        GSWC_Pro_Upgrader::render_upgrade_ui();
-    }
-    ?>
 
     <p class="gswc-footer">
         Google Shopping for WooCommerce v<?php echo esc_html(GSWC_VERSION); ?> &middot;
