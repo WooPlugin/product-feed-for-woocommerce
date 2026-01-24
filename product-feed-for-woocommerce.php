@@ -8,7 +8,7 @@
  * Author URI: https://wooplugin.pro
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: product-feed-for-woocommerce
+ * Text Domain: gtin-product-feed-for-google-shopping
  * Domain Path: /languages
  * Requires at least: 6.0
  * Requires PHP: 8.0
@@ -37,7 +37,7 @@ if (class_exists(YahnisElsts\PluginUpdateChecker\v5\PucFactory::class)) {
     $gswc_update_checker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
         'https://github.com/WooPlugin/product-feed-for-woocommerce/',
         __FILE__,
-        'product-feed-for-woocommerce'
+        'gtin-product-feed-for-google-shopping'
     );
     $gswc_update_checker->getVcsApi()->enableReleaseAssets();
 }
@@ -63,7 +63,7 @@ function gswc_check_woocommerce() {
         add_action('admin_notices', function () {
             ?>
             <div class="notice notice-error">
-                <p><?php esc_html_e('GTIN Product Feed for Google Shopping requires WooCommerce to be installed and active.', 'product-feed-for-woocommerce'); ?></p>
+                <p><?php esc_html_e('GTIN Product Feed for Google Shopping requires WooCommerce to be installed and active.', 'gtin-product-feed-for-google-shopping'); ?></p>
             </div>
             <?php
         });
@@ -79,9 +79,6 @@ function gswc_init() {
     if (!gswc_check_woocommerce()) {
         return;
     }
-
-    // Load text domain
-    load_plugin_textdomain('product-feed-for-woocommerce', false, dirname(plugin_basename(__FILE__)) . '/languages');
 
     // Include required files
     require_once GSWC_PLUGIN_DIR . 'includes/class-remote-data.php';
@@ -130,11 +127,11 @@ register_deactivation_hook(__FILE__, 'gswc_deactivate');
  */
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
     $settings_link = '<a href="' . admin_url('admin.php?page=wc-settings&tab=gswc_feed') . '">' .
-        esc_html__('Settings', 'product-feed-for-woocommerce') . '</a>';
+        esc_html__('Settings', 'gtin-product-feed-for-google-shopping') . '</a>';
     array_unshift($links, $settings_link);
 
     $links[] = '<a href="' . esc_url(GSWC_PRO_URL) . '" style="color: #4285f4; font-weight: bold;">' .
-        esc_html__('Upgrade to Pro', 'product-feed-for-woocommerce') . '</a>';
+        esc_html__('Upgrade to Pro', 'gtin-product-feed-for-google-shopping') . '</a>';
 
     return $links;
 });

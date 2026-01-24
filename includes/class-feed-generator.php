@@ -60,7 +60,7 @@ class GSWC_Feed_Generator {
         check_ajax_referer('gswc_feed_nonce', 'nonce');
 
         if (!current_user_can('manage_woocommerce')) {
-            wp_send_json_error(__('Permission denied.', 'product-feed-for-woocommerce'));
+            wp_send_json_error(__('Permission denied.', 'gtin-product-feed-for-google-shopping'));
         }
 
         $result = self::generate();
@@ -72,12 +72,12 @@ class GSWC_Feed_Generator {
         wp_send_json_success([
             'message' => sprintf(
                 /* translators: %d: number of products */
-                __('Feed generated with %d products.', 'product-feed-for-woocommerce'),
+                __('Feed generated with %d products.', 'gtin-product-feed-for-google-shopping'),
                 $result['count']
             ),
             'url'     => self::get_feed_url('google'),
             'count'   => $result['count'],
-            'timeago' => __('just now', 'product-feed-for-woocommerce'),
+            'timeago' => __('just now', 'gtin-product-feed-for-google-shopping'),
         ]);
     }
 
@@ -173,7 +173,7 @@ class GSWC_Feed_Generator {
 
         $result = file_put_contents($file, $content);
         if ($result === false) {
-            return new WP_Error('write_error', __('Failed to write feed file.', 'product-feed-for-woocommerce'));
+            return new WP_Error('write_error', __('Failed to write feed file.', 'gtin-product-feed-for-google-shopping'));
         }
 
         return true;

@@ -60,9 +60,9 @@ class GSWC_Admin {
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce'   => wp_create_nonce('gswc_feed_nonce'),
             'strings' => [
-                'generating' => __('Generating...', 'product-feed-for-woocommerce'),
-                'success'    => __('Feed generated successfully!', 'product-feed-for-woocommerce'),
-                'error'      => __('Error:', 'product-feed-for-woocommerce'),
+                'generating' => __('Generating...', 'gtin-product-feed-for-google-shopping'),
+                'success'    => __('Feed generated successfully!', 'gtin-product-feed-for-google-shopping'),
+                'error'      => __('Error:', 'gtin-product-feed-for-google-shopping'),
             ],
         ]);
     }
@@ -73,8 +73,8 @@ class GSWC_Admin {
     public static function add_menu() {
         add_submenu_page(
             'woocommerce',
-            __('Google Shopping', 'product-feed-for-woocommerce'),
-            __('Google Shopping', 'product-feed-for-woocommerce'),
+            __('Google Shopping', 'gtin-product-feed-for-google-shopping'),
+            __('Google Shopping', 'gtin-product-feed-for-google-shopping'),
             'manage_woocommerce',
             'gswc-dashboard',
             [__CLASS__, 'render_dashboard']
@@ -110,7 +110,7 @@ class GSWC_Admin {
 
         wp_add_dashboard_widget(
             'gswc_dashboard_widget',
-            __('Google Shopping Feed', 'product-feed-for-woocommerce'),
+            __('Google Shopping Feed', 'gtin-product-feed-for-google-shopping'),
             [__CLASS__, 'render_dashboard_widget']
         );
 
@@ -189,7 +189,7 @@ class GSWC_Admin {
         <div class="gswc-widget">
             <?php if ($promotion) : ?>
                 <div class="gswc-widget-promo gswc-widget-promo-<?php echo esc_attr($promotion['style'] ?? 'highlight'); ?>">
-                    <strong><?php echo esc_html($promotion['title'] ?? __('Special Offer', 'product-feed-for-woocommerce')); ?></strong>
+                    <strong><?php echo esc_html($promotion['title'] ?? __('Special Offer', 'gtin-product-feed-for-google-shopping')); ?></strong>
                     <span><?php echo esc_html($promotion['message']); ?></span>
                     <?php if (!empty($promotion['code'])) : ?>
                         <code><?php echo esc_html($promotion['code']); ?></code>
@@ -200,13 +200,13 @@ class GSWC_Admin {
             <div class="gswc-widget-stats">
                 <div class="gswc-widget-stat">
                     <span class="gswc-widget-stat-value"><?php echo esc_html($product_count ?: '—'); ?></span>
-                    <span class="gswc-widget-stat-label"><?php esc_html_e('Products', 'product-feed-for-woocommerce'); ?></span>
+                    <span class="gswc-widget-stat-label"><?php esc_html_e('Products', 'gtin-product-feed-for-google-shopping'); ?></span>
                 </div>
                 <div class="gswc-widget-stat">
                     <span class="gswc-widget-stat-value <?php echo $feed_exists ? 'status-ok' : 'status-none'; ?>">
                         <?php echo $feed_exists ? '✓' : '—'; ?>
                     </span>
-                    <span class="gswc-widget-stat-label"><?php esc_html_e('Feed', 'product-feed-for-woocommerce'); ?></span>
+                    <span class="gswc-widget-stat-label"><?php esc_html_e('Feed', 'gtin-product-feed-for-google-shopping'); ?></span>
                 </div>
                 <div class="gswc-widget-stat">
                     <span class="gswc-widget-stat-value gswc-widget-stat-time">
@@ -218,7 +218,7 @@ class GSWC_Admin {
                         }
                         ?>
                     </span>
-                    <span class="gswc-widget-stat-label"><?php esc_html_e('Last Update', 'product-feed-for-woocommerce'); ?></span>
+                    <span class="gswc-widget-stat-label"><?php esc_html_e('Last Update', 'gtin-product-feed-for-google-shopping'); ?></span>
                 </div>
             </div>
 
@@ -233,14 +233,14 @@ class GSWC_Admin {
                                 '%d product changed since last feed update',
                                 '%d products changed since last feed update',
                                 $products_changed,
-                                'product-feed-for-woocommerce'
+                                'gtin-product-feed-for-google-shopping'
                             )),
                             $products_changed
                         );
                         ?>
                     </span>
                     <a href="<?php echo esc_url($pro['url']); ?>" target="_blank" class="gswc-widget-stale-link">
-                        <?php esc_html_e('Auto-update with Pro', 'product-feed-for-woocommerce'); ?>
+                        <?php esc_html_e('Auto-update with Pro', 'gtin-product-feed-for-google-shopping'); ?>
                     </a>
                 </div>
             <?php endif; ?>
@@ -249,33 +249,33 @@ class GSWC_Admin {
                 <div class="gswc-widget-url">
                     <input type="text" value="<?php echo esc_url($feed_url); ?>" readonly onclick="this.select();" />
                     <button type="button" class="button gswc-widget-copy" data-url="<?php echo esc_url($feed_url); ?>">
-                        <?php esc_html_e('Copy', 'product-feed-for-woocommerce'); ?>
+                        <?php esc_html_e('Copy', 'gtin-product-feed-for-google-shopping'); ?>
                     </button>
                 </div>
             <?php endif; ?>
 
             <div class="gswc-widget-actions">
                 <button type="button" id="gswc-widget-generate" class="button button-primary">
-                    <?php $feed_exists ? esc_html_e('Regenerate Feed', 'product-feed-for-woocommerce') : esc_html_e('Generate Feed', 'product-feed-for-woocommerce'); ?>
+                    <?php $feed_exists ? esc_html_e('Regenerate Feed', 'gtin-product-feed-for-google-shopping') : esc_html_e('Generate Feed', 'gtin-product-feed-for-google-shopping'); ?>
                 </button>
                 <span id="gswc-widget-spinner" class="spinner"></span>
                 <span id="gswc-widget-result"></span>
 
                 <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=gswc_feed')); ?>" class="gswc-widget-settings">
-                    <?php esc_html_e('Settings', 'product-feed-for-woocommerce'); ?> →
+                    <?php esc_html_e('Settings', 'gtin-product-feed-for-google-shopping'); ?> →
                 </a>
             </div>
 
             <div class="gswc-widget-upsell">
                 <p>
-                    <strong><?php esc_html_e('Need automation?', 'product-feed-for-woocommerce'); ?></strong>
-                    <?php esc_html_e('Pro auto-updates your feed + adds Facebook, Pinterest, TikTok, Snapchat.', 'product-feed-for-woocommerce'); ?>
+                    <strong><?php esc_html_e('Need automation?', 'gtin-product-feed-for-google-shopping'); ?></strong>
+                    <?php esc_html_e('Pro auto-updates your feed + adds Facebook, Pinterest, TikTok, Snapchat.', 'gtin-product-feed-for-google-shopping'); ?>
                 </p>
                 <a href="<?php echo esc_url($pro['url']); ?>" target="_blank" class="gswc-widget-pro-link">
                     <?php
                     printf(
                         /* translators: %s: price */
-                        esc_html__('Get Pro - %s', 'product-feed-for-woocommerce'),
+                        esc_html__('Get Pro - %s', 'gtin-product-feed-for-google-shopping'),
                         esc_html($pro['display'])
                     );
                     ?>

@@ -96,7 +96,7 @@ class GSWC_Product_Fields {
      */
     public static function add_product_data_tab($tabs) {
         $tabs['gswc_google_shopping'] = [
-            'label'    => __('Google Shopping', 'product-feed-for-woocommerce'),
+            'label'    => __('Google Shopping', 'gtin-product-feed-for-google-shopping'),
             'target'   => 'gswc_google_shopping_data',
             'class'    => ['show_if_simple', 'show_if_variable', 'show_if_external'],
             'priority' => 25, // After Inventory (20), before Shipping (30)
@@ -120,7 +120,7 @@ class GSWC_Product_Fields {
                         <code class="gswc-promo-code"><?php echo esc_html($promotion['code']); ?></code>
                     <?php endif; ?>
                     <a href="<?php echo esc_url(GSWC_PRO_URL); ?>" class="gswc-promo-link" target="_blank">
-                        <?php esc_html_e('Get Pro', 'product-feed-for-woocommerce'); ?> →
+                        <?php esc_html_e('Get Pro', 'gtin-product-feed-for-google-shopping'); ?> →
                     </a>
                 </div>
             <?php endif; ?>
@@ -128,10 +128,10 @@ class GSWC_Product_Fields {
             <div class="options_group">
                 <p class="form-field">
                     <span class="gswc-panel-title">
-                        <?php esc_html_e('Product Identifiers', 'product-feed-for-woocommerce'); ?>
+                        <?php esc_html_e('Product Identifiers', 'gtin-product-feed-for-google-shopping'); ?>
                     </span>
                     <span class="gswc-panel-desc">
-                        <?php esc_html_e('Required for Google Merchant Center approval.', 'product-feed-for-woocommerce'); ?>
+                        <?php esc_html_e('Required for Google Merchant Center approval.', 'gtin-product-feed-for-google-shopping'); ?>
                     </span>
                 </p>
                 <?php
@@ -177,21 +177,21 @@ class GSWC_Product_Fields {
             <div class="gswc-pro-card">
                 <div class="gswc-pro-features">
                     <p class="gswc-pro-title">
-                        <strong><?php esc_html_e('Need more options?', 'product-feed-for-woocommerce'); ?></strong>
-                        <span><?php esc_html_e('Upgrade to Pro', 'product-feed-for-woocommerce'); ?></span>
+                        <strong><?php esc_html_e('Need more options?', 'gtin-product-feed-for-google-shopping'); ?></strong>
+                        <span><?php esc_html_e('Upgrade to Pro', 'gtin-product-feed-for-google-shopping'); ?></span>
                     </p>
                     <ul>
-                        <li><?php esc_html_e('Age Group, Gender, Color, Size fields', 'product-feed-for-woocommerce'); ?></li>
-                        <li><?php esc_html_e('Google Product Category mapping', 'product-feed-for-woocommerce'); ?></li>
-                        <li><?php esc_html_e('Custom Labels for campaigns', 'product-feed-for-woocommerce'); ?></li>
-                        <li><?php esc_html_e('Scheduled auto-updates', 'product-feed-for-woocommerce'); ?></li>
-                        <li><?php esc_html_e('Facebook, Pinterest, TikTok, Snapchat feeds', 'product-feed-for-woocommerce'); ?></li>
+                        <li><?php esc_html_e('Age Group, Gender, Color, Size fields', 'gtin-product-feed-for-google-shopping'); ?></li>
+                        <li><?php esc_html_e('Google Product Category mapping', 'gtin-product-feed-for-google-shopping'); ?></li>
+                        <li><?php esc_html_e('Custom Labels for campaigns', 'gtin-product-feed-for-google-shopping'); ?></li>
+                        <li><?php esc_html_e('Scheduled auto-updates', 'gtin-product-feed-for-google-shopping'); ?></li>
+                        <li><?php esc_html_e('Facebook, Pinterest, TikTok, Snapchat feeds', 'gtin-product-feed-for-google-shopping'); ?></li>
                     </ul>
                     <a href="<?php echo esc_url($pro['url']); ?>" class="button button-primary gswc-pro-btn" target="_blank">
                         <?php
                         printf(
                             /* translators: %s: price */
-                            esc_html__('Get Pro - %s/year', 'product-feed-for-woocommerce'),
+                            esc_html__('Get Pro - %s/year', 'gtin-product-feed-for-google-shopping'),
                             esc_html('$' . $pro['price'])
                         );
                         ?>
@@ -502,13 +502,13 @@ class GSWC_Product_Fields {
         ?>
         <br class="clear">
         <label class="alignleft">
-            <span class="title"><?php esc_html_e('GTIN', 'product-feed-for-woocommerce'); ?></span>
+            <span class="title"><?php esc_html_e('GTIN', 'gtin-product-feed-for-google-shopping'); ?></span>
             <span class="input-text-wrap">
                 <input type="text" name="_gswc_gtin" class="text" value="">
             </span>
         </label>
         <label class="alignleft">
-            <span class="title"><?php esc_html_e('Brand', 'product-feed-for-woocommerce'); ?></span>
+            <span class="title"><?php esc_html_e('Brand', 'gtin-product-feed-for-google-shopping'); ?></span>
             <span class="input-text-wrap">
                 <input type="text" name="_gswc_brand" class="text" value="">
             </span>

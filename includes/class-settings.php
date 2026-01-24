@@ -32,7 +32,7 @@ class GSWC_Settings {
      * @return array
      */
     public static function add_settings_tab($tabs) {
-        $tabs['gswc_feed'] = __('Google Shopping', 'product-feed-for-woocommerce');
+        $tabs['gswc_feed'] = __('Google Shopping', 'gtin-product-feed-for-google-shopping');
         return $tabs;
     }
 
@@ -79,7 +79,7 @@ class GSWC_Settings {
         ?>
         <div class="gswc-sidebar-card gswc-promo <?php echo esc_attr($style_class); ?>">
             <div class="gswc-promo-badge">
-                <?php echo esc_html($promotion['title'] ?? __('Special Offer', 'product-feed-for-woocommerce')); ?>
+                <?php echo esc_html($promotion['title'] ?? __('Special Offer', 'gtin-product-feed-for-google-shopping')); ?>
             </div>
             <p class="gswc-promo-message">
                 <?php echo esc_html($promotion['message']); ?>
@@ -88,7 +88,7 @@ class GSWC_Settings {
                 <div class="gswc-promo-code">
                     <span class="code"><?php echo esc_html($promotion['code']); ?></span>
                     <button type="button" class="gswc-copy-code" data-code="<?php echo esc_attr($promotion['code']); ?>">
-                        <?php esc_html_e('Copy', 'product-feed-for-woocommerce'); ?>
+                        <?php esc_html_e('Copy', 'gtin-product-feed-for-google-shopping'); ?>
                     </button>
                 </div>
             <?php endif; ?>
@@ -97,7 +97,7 @@ class GSWC_Settings {
                     <?php
                     printf(
                         /* translators: %s: expiration date */
-                        esc_html__('Expires: %s', 'product-feed-for-woocommerce'),
+                        esc_html__('Expires: %s', 'gtin-product-feed-for-google-shopping'),
                         esc_html(wp_date(get_option('date_format'), strtotime($promotion['expires'])))
                     );
                     ?>
@@ -116,7 +116,7 @@ class GSWC_Settings {
     private static function output_pro_upsell($pro, $features) {
         ?>
         <div class="gswc-sidebar-card gswc-pro-upsell">
-            <h3><?php esc_html_e('Upgrade to Pro', 'product-feed-for-woocommerce'); ?></h3>
+            <h3><?php esc_html_e('Upgrade to Pro', 'gtin-product-feed-for-google-shopping'); ?></h3>
 
             <div class="gswc-pro-price">
                 <span class="price"><?php echo esc_html($pro['display']); ?></span>
@@ -130,7 +130,7 @@ class GSWC_Settings {
             </ul>
 
             <a href="<?php echo esc_url($pro['url']); ?>" class="gswc-pro-button" target="_blank">
-                <?php esc_html_e('Get Pro', 'product-feed-for-woocommerce'); ?>
+                <?php esc_html_e('Get Pro', 'gtin-product-feed-for-google-shopping'); ?>
                 <span class="dashicons dashicons-external"></span>
             </a>
         </div>
@@ -153,14 +153,14 @@ class GSWC_Settings {
         $settings = [
             // General Section
             [
-                'title' => __('Feed Settings', 'product-feed-for-woocommerce'),
+                'title' => __('Feed Settings', 'gtin-product-feed-for-google-shopping'),
                 'type'  => 'title',
-                'desc'  => __('Configure your Google Shopping product feed.', 'product-feed-for-woocommerce'),
+                'desc'  => __('Configure your Google Shopping product feed.', 'gtin-product-feed-for-google-shopping'),
                 'id'    => 'gswc_feed_general',
             ],
             [
-                'title'   => __('Include Out of Stock', 'product-feed-for-woocommerce'),
-                'desc'    => __('Include out of stock products in the feed', 'product-feed-for-woocommerce'),
+                'title'   => __('Include Out of Stock', 'gtin-product-feed-for-google-shopping'),
+                'desc'    => __('Include out of stock products in the feed', 'gtin-product-feed-for-google-shopping'),
                 'id'      => 'gswc_feed_include_outofstock',
                 'type'    => 'checkbox',
                 'default' => 'no',
@@ -172,34 +172,34 @@ class GSWC_Settings {
 
             // Google Feed Section
             [
-                'title' => __('Google Merchant Center', 'product-feed-for-woocommerce'),
+                'title' => __('Google Merchant Center', 'gtin-product-feed-for-google-shopping'),
                 'type'  => 'title',
-                'desc'  => __('Settings for your Google Shopping feed.', 'product-feed-for-woocommerce'),
+                'desc'  => __('Settings for your Google Shopping feed.', 'gtin-product-feed-for-google-shopping'),
                 'id'    => 'gswc_feed_google',
             ],
             [
-                'title'       => __('Store Name', 'product-feed-for-woocommerce'),
-                'desc'        => __('Your store name as it appears in the feed.', 'product-feed-for-woocommerce'),
+                'title'       => __('Store Name', 'gtin-product-feed-for-google-shopping'),
+                'desc'        => __('Your store name as it appears in the feed.', 'gtin-product-feed-for-google-shopping'),
                 'id'          => 'gswc_feed_store_name',
                 'type'        => 'text',
                 'default'     => get_bloginfo('name'),
                 'placeholder' => get_bloginfo('name'),
             ],
             [
-                'title'   => __('Default Brand', 'product-feed-for-woocommerce'),
-                'desc'    => __('Default brand for products without a brand set.', 'product-feed-for-woocommerce'),
+                'title'   => __('Default Brand', 'gtin-product-feed-for-google-shopping'),
+                'desc'    => __('Default brand for products without a brand set.', 'gtin-product-feed-for-google-shopping'),
                 'id'      => 'gswc_feed_default_brand',
                 'type'    => 'text',
                 'default' => '',
             ],
             [
-                'title'   => __('Default Condition', 'product-feed-for-woocommerce'),
+                'title'   => __('Default Condition', 'gtin-product-feed-for-google-shopping'),
                 'id'      => 'gswc_feed_default_condition',
                 'type'    => 'select',
                 'options' => [
-                    'new'         => __('New', 'product-feed-for-woocommerce'),
-                    'refurbished' => __('Refurbished', 'product-feed-for-woocommerce'),
-                    'used'        => __('Used', 'product-feed-for-woocommerce'),
+                    'new'         => __('New', 'gtin-product-feed-for-google-shopping'),
+                    'refurbished' => __('Refurbished', 'gtin-product-feed-for-google-shopping'),
+                    'used'        => __('Used', 'gtin-product-feed-for-google-shopping'),
                 ],
                 'default' => 'new',
             ],
@@ -210,7 +210,7 @@ class GSWC_Settings {
 
             // Feed Status Section
             [
-                'title' => __('Feed Status', 'product-feed-for-woocommerce'),
+                'title' => __('Feed Status', 'gtin-product-feed-for-google-shopping'),
                 'type'  => 'title',
                 'id'    => 'gswc_feed_status_section',
             ],
@@ -241,22 +241,22 @@ class GSWC_Settings {
         ?>
         <tr valign="top">
             <th scope="row" class="titledesc">
-                <?php esc_html_e('Feed URL', 'product-feed-for-woocommerce'); ?>
+                <?php esc_html_e('Feed URL', 'gtin-product-feed-for-google-shopping'); ?>
             </th>
             <td class="forminp">
                 <?php if ($feed_exists) : ?>
                     <div class="gswc-feed-url-row">
                         <input type="text" class="gswc-feed-url-input" value="<?php echo esc_url($feed_url); ?>" readonly onclick="this.select();" />
-                        <a href="<?php echo esc_url($feed_url); ?>" target="_blank" class="button button-small" title="<?php esc_attr_e('Open feed', 'product-feed-for-woocommerce'); ?>">↗</a>
+                        <a href="<?php echo esc_url($feed_url); ?>" target="_blank" class="button button-small" title="<?php esc_attr_e('Open feed', 'gtin-product-feed-for-google-shopping'); ?>">↗</a>
                         <button type="button" class="button button-small gswc-copy-url" data-url="<?php echo esc_attr($feed_url); ?>">
-                            <?php esc_html_e('Copy', 'product-feed-for-woocommerce'); ?>
+                            <?php esc_html_e('Copy', 'gtin-product-feed-for-google-shopping'); ?>
                         </button>
                     </div>
                     <p class="description">
                         <?php
                         printf(
                             /* translators: %1$s: product count, %2$s: date */
-                            esc_html__('Last generated: %1$s products on %2$s', 'product-feed-for-woocommerce'),
+                            esc_html__('Last generated: %1$s products on %2$s', 'gtin-product-feed-for-google-shopping'),
                             '<strong>' . esc_html($product_count) . '</strong>',
                             '<strong>' . esc_html(wp_date(get_option('date_format') . ' ' . get_option('time_format'), $last_generated)) . '</strong>'
                         );
@@ -264,18 +264,18 @@ class GSWC_Settings {
                     </p>
                 <?php else : ?>
                     <p class="description">
-                        <?php esc_html_e('Feed not yet generated. Click "Generate Feed Now" below.', 'product-feed-for-woocommerce'); ?>
+                        <?php esc_html_e('Feed not yet generated. Click "Generate Feed Now" below.', 'gtin-product-feed-for-google-shopping'); ?>
                     </p>
                 <?php endif; ?>
             </td>
         </tr>
         <tr valign="top">
             <th scope="row" class="titledesc">
-                <?php esc_html_e('Actions', 'product-feed-for-woocommerce'); ?>
+                <?php esc_html_e('Actions', 'gtin-product-feed-for-google-shopping'); ?>
             </th>
             <td class="forminp">
                 <button type="button" id="gswc-generate-feed" class="button button-primary">
-                    <?php esc_html_e('Generate Feed Now', 'product-feed-for-woocommerce'); ?>
+                    <?php esc_html_e('Generate Feed Now', 'gtin-product-feed-for-google-shopping'); ?>
                 </button>
                 <span id="gswc-feed-spinner" class="spinner" style="float: none; margin-top: 0;"></span>
                 <span id="gswc-feed-result"></span>
@@ -505,9 +505,9 @@ class GSWC_Settings {
                     btn.addEventListener('click', function() {
                         var code = this.getAttribute('data-code');
                         navigator.clipboard.writeText(code).then(function() {
-                            btn.textContent = '<?php echo esc_js(__('Copied!', 'product-feed-for-woocommerce')); ?>';
+                            btn.textContent = '<?php echo esc_js(__('Copied!', 'gtin-product-feed-for-google-shopping')); ?>';
                             setTimeout(function() {
-                                btn.textContent = '<?php echo esc_js(__('Copy', 'product-feed-for-woocommerce')); ?>';
+                                btn.textContent = '<?php echo esc_js(__('Copy', 'gtin-product-feed-for-google-shopping')); ?>';
                             }, 2000);
                         });
                     });
