@@ -147,31 +147,26 @@ class GSWC_Pro_Upgrader {
         require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
         require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 
-        // Define quiet skin class if not already defined
-        if (!class_exists('GSWC_Quiet_Upgrader_Skin')) {
-            class GSWC_Quiet_Upgrader_Skin extends WP_Upgrader_Skin {
-                private $errors = [];
+        // Use anonymous class for quiet upgrader skin
+        $skin = new class extends WP_Upgrader_Skin {
+            private $errors = [];
 
-                public function header() {}
-                public function footer() {}
-                public function feedback($feedback, ...$args) {}
+            public function header() {}
+            public function footer() {}
+            public function feedback($feedback, ...$args) {}
 
-                public function error($errors) {
-                    if (is_wp_error($errors)) {
-                        $this->errors = array_merge($this->errors, $errors->get_error_messages());
-                    } elseif (is_string($errors)) {
-                        $this->errors[] = $errors;
-                    }
-                }
-
-                public function get_errors() {
-                    return $this->errors;
+            public function error($errors) {
+                if (is_wp_error($errors)) {
+                    $this->errors = array_merge($this->errors, $errors->get_error_messages());
+                } elseif (is_string($errors)) {
+                    $this->errors[] = $errors;
                 }
             }
-        }
 
-        // Use custom skin to capture output
-        $skin = new GSWC_Quiet_Upgrader_Skin();
+            public function get_errors() {
+                return $this->errors;
+            }
+        };
         $upgrader = new Plugin_Upgrader($skin);
 
         // Install the plugin
