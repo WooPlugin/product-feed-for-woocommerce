@@ -93,6 +93,14 @@
                         result.textContent = data.data.message;
                         result.className = 'success';
                     }
+                    // If this was the first feed generation, reload to show full UI
+                    var feedTime = document.getElementById('gswc-feed-time');
+                    if (!feedTime) {
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
+                        return;
+                    }
                     // Update UI dynamically
                     updateFeedStats(data.data);
                 } else {
