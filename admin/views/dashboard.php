@@ -27,8 +27,8 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
 ?>
 <div class="wrap gswc-dashboard">
     <h1 class="gswc-header">
-        <span class="gswc-logo">Google Shopping</span>
-        <?php esc_html_e('for WooCommerce', 'product-feed-for-woocommerce'); ?>
+        <span class="gswc-logo">GTIN Product Feed</span>
+        <?php esc_html_e('for Google Shopping', 'product-feed-for-woocommerce'); ?>
         <a href="https://wooplugin.pro" target="_blank" class="gswc-brand">by wooplugin.pro</a>
     </h1>
 

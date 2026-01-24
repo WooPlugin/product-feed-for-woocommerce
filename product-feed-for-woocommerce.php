@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Product Feed for WooCommerce – Google Shopping
+ * Plugin Name: GTIN Product Feed for Google Shopping
  * Plugin URI: https://wooplugin.pro
- * Description: Add GTIN, Brand, MPN fields to WooCommerce products. Generate Google Merchant Center feeds. By WooPlugin.
+ * Description: Add GTIN, Brand, MPN fields to products. Generate Google Merchant Center feeds. Works with WooCommerce. By WooPlugin.
  * Version: 1.0.0
  * Author: WooPlugin
  * Author URI: https://wooplugin.pro
@@ -63,7 +63,7 @@ function gswc_check_woocommerce() {
         add_action('admin_notices', function () {
             ?>
             <div class="notice notice-error">
-                <p><?php esc_html_e('Google Shopping for WooCommerce requires WooCommerce to be installed and active.', 'product-feed-for-woocommerce'); ?></p>
+                <p><?php esc_html_e('GTIN Product Feed for Google Shopping requires WooCommerce to be installed and active.', 'product-feed-for-woocommerce'); ?></p>
             </div>
             <?php
         });

@@ -1,6 +1,6 @@
-=== Product Feed for WooCommerce – Google Shopping ===
+=== GTIN Product Feed for Google Shopping ===
 Contributors: wooplugin
-Tags: woocommerce, google shopping, product feed, gtin, google merchant center
+Tags: gtin, google shopping, product feed, google merchant center, brand
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
@@ -8,11 +8,11 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Add GTIN, Brand, MPN fields to WooCommerce products and generate Google Merchant Center feeds. Free forever. By WooPlugin.
+Add GTIN, Brand, MPN fields to products and generate Google Merchant Center feeds. Works with WooCommerce. Free forever. By WooPlugin.
 
 == Description ==
 
-**Product Feed for WooCommerce – Google Shopping** makes it easy to sell on Google Shopping. Add product identifiers (GTIN, Brand, MPN) to your WooCommerce products and generate XML feeds for Google Merchant Center.
+**GTIN Product Feed for Google Shopping** makes it easy to sell on Google Shopping. Add product identifiers (GTIN, Brand, MPN) to your products and generate XML feeds for Google Merchant Center. Works seamlessly with WooCommerce.
 
 = Free Features =
 
@@ -53,7 +53,7 @@ Add GTIN, Brand, MPN fields to WooCommerce products and generate Google Merchant
 
 == Installation ==
 
-1. Upload `product-feed-for-woocommerce` folder to `/wp-content/plugins/`
+1. Upload the plugin folder to `/wp-content/plugins/`
 2. Activate through 'Plugins' menu in WordPress
 3. Go to WooCommerce → Settings → Google Shopping to configure
 4. Add product identifiers to your products
