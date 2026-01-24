@@ -56,6 +56,11 @@ class GSWC_Settings {
      * Output sidebar content (promotions + Pro upsell)
      */
     private static function output_sidebar() {
+        // Show license activation if Pro not active
+        if (!GSWC_Pro_Upgrader::is_pro_active()) {
+            self::output_license_activation();
+        }
+
         $promotion = GSWC_Remote_Data::get_promotion();
         $pro = GSWC_Remote_Data::get_pro_pricing();
         $features = GSWC_Remote_Data::get_pro_features();
@@ -65,8 +70,120 @@ class GSWC_Settings {
             self::output_promotion($promotion);
         }
 
-        // Output Pro upsell
-        self::output_pro_upsell($pro, $features);
+        // Output Pro upsell (only if Pro not active)
+        if (!GSWC_Pro_Upgrader::is_pro_active()) {
+            self::output_pro_upsell($pro, $features);
+        }
+    }
+
+    /**
+     * Output license activation form
+     */
+    private static function output_license_activation() {
+        if (GSWC_Pro_Upgrader::is_pro_installed()) {
+            ?>
+            <div class="gswc-sidebar-card gswc-license-card">
+                <h3><?php esc_html_e('Pro Installed', 'gtin-product-feed-for-google-shopping'); ?></h3>
+                <p><?php esc_html_e('Pro is installed but not active.', 'gtin-product-feed-for-google-shopping'); ?></p>
+                <a href="<?php echo esc_url(admin_url('plugins.php')); ?>" class="button button-primary">
+                    <?php esc_html_e('Activate Pro', 'gtin-product-feed-for-google-shopping'); ?>
+                </a>
+            </div>
+            <?php
+            return;
+        }
+
+        $nonce = wp_create_nonce('gswc_pro_upgrade');
+        $pending_license = get_option('gswc_pending_license_key', '');
+        ?>
+        <div class="gswc-sidebar-card gswc-license-card">
+            <h3><?php esc_html_e('Have a License?', 'gtin-product-feed-for-google-shopping'); ?></h3>
+            <p><?php esc_html_e('Enter your license key to install Pro automatically.', 'gtin-product-feed-for-google-shopping'); ?></p>
+
+            <input type="text"
+                   id="gswc-license-key-sidebar"
+                   class="gswc-license-input-sidebar"
+                   placeholder="<?php esc_attr_e('License key...', 'gtin-product-feed-for-google-shopping'); ?>"
+                   value="<?php echo esc_attr($pending_license); ?>" />
+            <button type="button" id="gswc-validate-license-sidebar" class="button button-primary">
+                <?php esc_html_e('Install Pro', 'gtin-product-feed-for-google-shopping'); ?>
+            </button>
+
+            <div id="gswc-upgrade-status-sidebar" class="gswc-upgrade-status-sidebar"></div>
+        </div>
+
+        <script>
+        (function() {
+            var validateBtn = document.getElementById('gswc-validate-license-sidebar');
+            var licenseInput = document.getElementById('gswc-license-key-sidebar');
+            var status = document.getElementById('gswc-upgrade-status-sidebar');
+
+            if (!validateBtn) return;
+
+            validateBtn.addEventListener('click', function() {
+                var licenseKey = licenseInput.value.trim();
+                if (!licenseKey) {
+                    showStatus('error', '<?php echo esc_js(__('Please enter a license key.', 'gtin-product-feed-for-google-shopping')); ?>');
+                    return;
+                }
+
+                showStatus('loading', '<?php echo esc_js(__('Validating...', 'gtin-product-feed-for-google-shopping')); ?>');
+                validateBtn.disabled = true;
+
+                fetch(ajaxurl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: 'gswc_validate_license',
+                        nonce: '<?php echo esc_js($nonce); ?>',
+                        license_key: licenseKey
+                    })
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (!data.success) throw new Error(data.data.message);
+
+                    showStatus('loading', '<?php echo esc_js(__('Installing Pro...', 'gtin-product-feed-for-google-shopping')); ?>');
+
+                    return fetch(ajaxurl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({
+                            action: 'gswc_install_pro',
+                            nonce: '<?php echo esc_js($nonce); ?>',
+                            download_url: data.data.download_url
+                        })
+                    });
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (!data.success) throw new Error(data.data.message);
+
+                    showStatus('success', data.data.message);
+
+                    if (data.data.redirect_to) {
+                        setTimeout(function() {
+                            window.location.href = data.data.redirect_to;
+                        }, 1500);
+                    }
+                })
+                .catch(function(error) {
+                    showStatus('error', error.message);
+                    validateBtn.disabled = false;
+                });
+            });
+
+            function showStatus(type, message) {
+                status.className = 'gswc-upgrade-status-sidebar ' + type;
+                if (type === 'loading') {
+                    status.innerHTML = '<span class="spinner is-active"></span> ' + message;
+                } else {
+                    status.textContent = message;
+                }
+            }
+        })();
+        </script>
+        <?php
     }
 
     /**
@@ -406,6 +523,74 @@ class GSWC_Settings {
                 margin: 0;
                 font-size: 12px;
                 color: #6b7280;
+            }
+
+            /* License activation styles */
+            .gswc-license-card {
+                background: linear-gradient(135deg, #f0f6ff 0%, #e0f2fe 100%);
+                border-color: #0284c7;
+            }
+
+            .gswc-license-card h3 {
+                margin: 0 0 8px 0;
+                font-size: 15px;
+                color: #0369a1;
+            }
+
+            .gswc-license-card p {
+                margin: 0 0 12px 0;
+                font-size: 13px;
+                color: #475569;
+            }
+
+            .gswc-license-input-sidebar {
+                width: 100%;
+                padding: 8px 10px;
+                margin-bottom: 10px;
+                border: 1px solid #cbd5e1;
+                border-radius: 4px;
+                font-size: 13px;
+                box-sizing: border-box;
+            }
+
+            .gswc-license-card .button {
+                width: 100%;
+            }
+
+            .gswc-upgrade-status-sidebar {
+                margin-top: 10px;
+                padding: 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                display: none;
+            }
+
+            .gswc-upgrade-status-sidebar.loading,
+            .gswc-upgrade-status-sidebar.success,
+            .gswc-upgrade-status-sidebar.error {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .gswc-upgrade-status-sidebar.loading {
+                background: #e0f2fe;
+                color: #075985;
+            }
+
+            .gswc-upgrade-status-sidebar.success {
+                background: #dcfce7;
+                color: #166534;
+            }
+
+            .gswc-upgrade-status-sidebar.error {
+                background: #fee2e2;
+                color: #991b1b;
+            }
+
+            .gswc-upgrade-status-sidebar .spinner {
+                float: none;
+                margin: 0;
             }
 
             /* Pro upsell styles */
