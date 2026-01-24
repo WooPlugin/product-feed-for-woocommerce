@@ -1,6 +1,7 @@
 === GTIN Product Feed for Google Shopping ===
 Contributors: wooplugin
-Tags: gtin, google shopping, product feed, google merchant center, brand
+Donate link: https://wooplugin.pro/google-shopping-pro
+Tags: google shopping, product feed, woocommerce feed, google merchant center, gtin
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
@@ -8,48 +9,88 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Add GTIN, Brand, MPN fields to products and generate Google Merchant Center feeds. Works with WooCommerce. Free forever. By WooPlugin.
+Generate Google Shopping product feeds for WooCommerce. Add GTIN, Brand, MPN fields. Google Merchant Center compliant XML feeds. Free & lightweight.
 
 == Description ==
 
-**GTIN Product Feed for Google Shopping** makes it easy to sell on Google Shopping. Add product identifiers (GTIN, Brand, MPN) to your products and generate XML feeds for Google Merchant Center. Works seamlessly with WooCommerce.
+**GTIN Product Feed for Google Shopping** is a lightweight WooCommerce plugin that generates Google Merchant Center compliant product feeds. Add GTIN, Brand, and MPN identifiers to your products and create XML feeds ready for Google Shopping.
+
+= Why Choose This Plugin? =
+
+* **Lightweight & Fast** - No bloat, minimal footprint
+* **Google Compliant** - Follows Google's product data specification exactly
+* **Actually Free** - No product limits, no artificial restrictions
+* **Developer Friendly** - Clean code, REST API support, hooks for customization
 
 = Free Features =
 
-* **GTIN, Brand, MPN Fields** - Add product identifiers to any product (free, unlimited)
-* **Google Merchant Feed** - Generate compliant XML feeds for Google Shopping
-* **Variable Products** - Full support for product variations
-* **Unlimited Products** - No artificial product limits
+* **GTIN, Brand, MPN Fields** - Add product identifiers required by Google Shopping
+* **Google Merchant Center Feed** - Generate compliant XML feeds
+* **Variable Product Support** - Full support for WooCommerce variations
+* **Unlimited Products** - No artificial product limits (unlike some competitors)
 * **HPOS Compatible** - Works with WooCommerce High-Performance Order Storage
-* **REST API Support** - Manage fields via WooCommerce REST API
+* **REST API Support** - Manage product fields programmatically
+* **Identifier Exists Field** - For products without GTINs (handmade, custom items)
+* **Condition Field** - New, refurbished, or used product support
 
 = Pro Features =
 
-* **Scheduled Updates** - Automatic feed regeneration (hourly, daily, weekly)
-* **Auto-sync** - Regenerate feed when products change
-* **Multi-Channel** - Facebook, Pinterest, TikTok, Bing, Snapchat feeds
-* **Priority Support** - Direct email support from the developer
+Upgrade to [Pro](https://wooplugin.pro/google-shopping-pro) for advanced features:
 
-[Upgrade to Pro](https://wooplugin.pro/google-shopping-pro)
+* **Scheduled Feed Updates** - Automatic regeneration (hourly, daily, weekly)
+* **Auto-sync on Changes** - Feed updates when products change
+* **Multi-Channel Feeds** - Facebook, Pinterest, TikTok, Bing, Snapchat
+* **Category Mapping** - Map WooCommerce categories to Google taxonomy
+* **Advanced Filtering** - Include/exclude products by rules
+* **Priority Support** - Direct developer support
+
+= Supported Channels =
+
+**Free Version:**
+
+* Google Shopping / Google Merchant Center
+
+**Pro Version:**
+
+* Google Shopping
+* Facebook Catalog / Meta
+* Pinterest Catalog
+* TikTok Shop
+* Bing Shopping
+* Snapchat Product Catalog
+
+= Compatible With =
+
+* WooCommerce 8.0+
+* WordPress 6.0+
+* WooCommerce HPOS (High-Performance Order Storage)
+* PHP 8.0+
+* All themes (Storefront, Astra, flavor theme, etc.)
 
 = Perfect For =
 
-* **Online retailers** selling on Google Shopping
-* **Multi-channel sellers** managing product data
-* **Agencies** managing client product feeds
+* **Online retailers** selling physical products on Google Shopping
+* **Dropshippers** who need GTIN fields for supplier products
+* **Agencies** managing client WooCommerce stores
+* **Developers** who want clean, extensible code
 
 = How It Works =
 
 1. Install and activate the plugin
-2. Add GTIN, Brand, MPN to your products (Google Shopping tab)
-3. Configure feed settings in WooCommerce → Settings → Google Shopping
-4. Generate your feed and submit URL to Google Merchant Center
+2. Add GTIN, Brand, MPN to products (via Google Shopping tab in product editor)
+3. Configure feed settings: WooCommerce → Settings → Google Shopping
+4. Generate your feed and copy the URL
+5. Submit feed URL to Google Merchant Center
 
-= Requirements =
+= Documentation & Support =
 
-* WordPress 6.0+
-* WooCommerce 8.0+
-* PHP 8.0+
+* [Getting Started Guide](https://wooplugin.pro/guides)
+* [GitHub Repository](https://github.com/WooPlugin/product-feed-for-woocommerce)
+* [Support Forum](https://wordpress.org/support/plugin/gtin-product-feed-for-google-shopping/)
+
+= About WooPlugin =
+
+We build focused, lightweight WooCommerce plugins that do one thing well. No bloat, no upsell nag screens, no tracking. Just clean code that works.
 
 == Installation ==
 
@@ -61,17 +102,58 @@ Add GTIN, Brand, MPN fields to products and generate Google Merchant Center feed
 
 == Frequently Asked Questions ==
 
+= How do I create a Google Shopping feed? =
+
+1. Install and activate the plugin
+2. Go to WooCommerce → Settings → Google Shopping
+3. Configure your store details and feed options
+4. Click "Generate Feed"
+5. Copy the feed URL and add it to Google Merchant Center under Products → Feeds
+
+= What is GTIN and why do I need it? =
+
+GTIN (Global Trade Item Number) includes UPC, EAN, ISBN, and JAN barcodes. Google requires GTIN for most products to appear in Shopping results. Without GTIN, your products may have limited visibility or be disapproved.
+
+= My products don't have GTINs. What do I do? =
+
+Use the "Identifier Exists" field and set it to "No" for products without manufacturer GTINs (handmade items, custom products, vintage goods). Google allows this for qualifying products.
+
 = What product identifiers are supported? =
 
 GTIN (UPC, EAN, ISBN), MPN (Manufacturer Part Number), and Brand.
 
-= Does this work with variable products? =
+= Does this work with WooCommerce product variations? =
 
-Yes! You can set identifiers on both parent products and individual variations.
+Yes! You can set GTIN, Brand, and MPN on both parent variable products and individual variations. Variations inherit parent values unless overridden.
 
-= How often does the feed update? =
+= How do I fix Google Merchant Center errors? =
 
-You can manually regenerate anytime. Pro version adds scheduled automatic updates.
+Common fixes:
+
+* **Missing GTIN**: Add GTIN to product or set "Identifier Exists" to No
+* **Missing Brand**: Add Brand field to all products
+* **Invalid price**: Ensure products have valid prices in WooCommerce
+* **Missing images**: Add product images in WooCommerce
+
+= Is the feed URL public? =
+
+The feed URL is accessible without authentication so Google can fetch it. It uses a unique hash to prevent guessing. You can regenerate the URL anytime in settings.
+
+= Can I use this with other Google plugins? =
+
+Yes, this plugin focuses only on product identifiers and feed generation. It's compatible with Google Site Kit, Google Listings & Ads, and other Google plugins.
+
+= How often should I update my feed? =
+
+Google recommends updating feeds at least daily. The free version requires manual regeneration. Pro version includes scheduled automatic updates (hourly, daily, weekly).
+
+= Does this plugin slow down my site? =
+
+No. The plugin only loads on admin pages and during feed generation. It adds no frontend JavaScript or CSS. Feed generation runs via WP-Cron or manual trigger.
+
+= What's the difference between this and Google Listings & Ads? =
+
+Google Listings & Ads is Google's official plugin for syncing products. This plugin gives you more control over product data (GTIN, Brand, MPN fields) and generates standard XML feeds. Many stores use both together.
 
 = Is the feed compatible with Google Merchant Center? =
 
