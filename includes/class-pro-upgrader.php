@@ -195,6 +195,14 @@ class GSWC_Pro_Upgrader {
             ]);
         }
 
+        // Auto-activate the pending license in Pro
+        // (admin_init won't fire again in this request, so we call it explicitly)
+        $pending_license = get_option('gswc_pending_license_key');
+        if ($pending_license && class_exists('GSWC_Pro_License')) {
+            GSWC_Pro_License::activate($pending_license);
+            delete_option('gswc_pending_license_key');
+        }
+
         // Deactivate Free plugin
         deactivate_plugins(plugin_basename(GSWC_PLUGIN_FILE));
 
