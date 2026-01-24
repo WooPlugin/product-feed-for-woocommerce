@@ -1,0 +1,46 @@
+name: Build Release ZIP
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create plugin ZIP
+        run: |
+          # Create temp directory with correct plugin name
+          mkdir -p build/product-feed-for-woocommerce
+
+          # Copy plugin files (exclude dev files)
+          rsync -av --exclude='.git' \
+                    --exclude='.github' \
+                    --exclude='.gitignore' \
+                    --exclude='composer.json' \
+                    --exclude='composer.lock' \
+                    --exclude='phpcs.xml' \
+                    --exclude='phpunit.xml' \
+                    --exclude='tests' \
+                    --exclude='node_modules' \
+                    --exclude='.DS_Store' \
+                    ./ build/product-feed-for-woocommerce/
+
+          # Create ZIP
+          cd build
+          zip -r product-feed-for-woocommerce.zip product-feed-for-woocommerce
+
+      - name: Upload ZIP to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/product-feed-for-woocommerce.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
