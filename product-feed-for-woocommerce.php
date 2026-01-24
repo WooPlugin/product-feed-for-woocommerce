@@ -86,12 +86,14 @@ function gswc_init() {
     require_once GSWC_PLUGIN_DIR . 'includes/class-product-fields.php';
     require_once GSWC_PLUGIN_DIR . 'includes/class-feed-generator.php';
     require_once GSWC_PLUGIN_DIR . 'includes/class-admin.php';
+    require_once GSWC_PLUGIN_DIR . 'includes/class-review-notice.php';
 
     // Initialize components
     GSWC_Settings::init();
     GSWC_Product_Fields::init();
     GSWC_Feed_Generator::init();
     GSWC_Admin::init();
+    GSWC_Review_Notice::init();
 }
 add_action('plugins_loaded', 'gswc_init');
 
@@ -110,6 +112,11 @@ function gswc_activate() {
     $htaccess = $feed_dir . '/.htaccess';
     if (!file_exists($htaccess)) {
         file_put_contents($htaccess, "Options -Indexes\n");
+    }
+
+    // Record installation time for review notice
+    if (!get_option('gswc_installed_time')) {
+        update_option('gswc_installed_time', time());
     }
 }
 register_activation_hook(__FILE__, 'gswc_activate');
