@@ -69,13 +69,6 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
         </div>
     </div>
 
-    <?php
-    // Show upgrade UI if Pro is not active
-    if (!GSWC_Pro_Upgrader::is_pro_active()) {
-        GSWC_Pro_Upgrader::render_upgrade_ui();
-    }
-    ?>
-
     <div class="gswc-cards-grid">
         <div class="gswc-card">
             <h2><?php esc_html_e('Feed Status', 'gtin-product-feed-for-google-shopping'); ?></h2>
@@ -145,8 +138,16 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
             </div>
         </div>
 
-        <div class="gswc-card">
-            <h2><?php esc_html_e('Quick Start', 'gtin-product-feed-for-google-shopping'); ?></h2>
+        <div class="gswc-column-right">
+            <?php
+            // Show upgrade UI if Pro is not active
+            if (!GSWC_Pro_Upgrader::is_pro_active()) {
+                GSWC_Pro_Upgrader::render_upgrade_ui();
+            }
+            ?>
+
+            <div class="gswc-card">
+                <h2><?php esc_html_e('Quick Start', 'gtin-product-feed-for-google-shopping'); ?></h2>
 
             <ol class="gswc-steps">
                 <li>
@@ -174,6 +175,7 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
                     <p><?php esc_html_e('Copy the feed URL and add it as a scheduled feed in Google Merchant Center.', 'gtin-product-feed-for-google-shopping'); ?></p>
                 </li>
             </ol>
+            </div>
         </div>
     </div>
 
