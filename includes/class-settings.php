@@ -455,6 +455,9 @@ class GSWC_Settings {
                     );
                     ?>
                 </p>
+                <p class="description">
+                    <?php esc_html_e('Activating will install the Pro plugin and deactivate the Free version. You can deactivate your license anytime from the Pro plugin to free up the license slot.', 'gtin-product-feed-for-google-shopping'); ?>
+                </p>
                 <div id="gswc-license-status" class="gswc-license-status"></div>
             </td>
         </tr>
