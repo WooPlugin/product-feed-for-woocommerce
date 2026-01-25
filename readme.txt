@@ -170,9 +170,12 @@ Pro: Scheduled updates, auto-sync on product changes, multi-channel feeds, prior
 
 == Screenshots ==
 
-1. Product fields in WooCommerce product editor (Google Shopping tab)
-2. Feed settings in WooCommerce settings
-3. Dashboard with feed status and statistics
+1. GTIN, Brand, MPN, and Condition fields in the product editor (Google Shopping tab)
+2. Plugin settings page with feed configuration options (WooCommerce → Settings → Google Shopping)
+3. Feed status showing generated feed URL ready to submit to Google Merchant Center
+4. Variable product with GTIN fields available on each variation
+5. Filters tab for excluding categories, tags, and setting price ranges
+6. Generated XML feed preview showing Google-compliant product data
 
 == Changelog ==
 
