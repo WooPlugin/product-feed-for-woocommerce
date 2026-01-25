@@ -645,10 +645,9 @@ class GSWC_Settings {
                 'title'       => __('Category Mapping', 'gtin-product-feed-for-google-shopping'),
                 'description' => __('Map your WooCommerce categories to Google Product Categories for better product classification and ad performance.', 'gtin-product-feed-for-google-shopping'),
                 'items'       => [
-                    __('Bulk map categories to Google taxonomy', 'gtin-product-feed-for-google-shopping'),
-                    __('Autocomplete with 5,500+ Google categories', 'gtin-product-feed-for-google-shopping'),
-                    __('Automatic inheritance from parent categories', 'gtin-product-feed-for-google-shopping'),
-                    __('Import/export mappings', 'gtin-product-feed-for-google-shopping'),
+                    __('Map each category to Google taxonomy', 'gtin-product-feed-for-google-shopping'),
+                    __('Autocomplete search with 5,500+ categories', 'gtin-product-feed-for-google-shopping'),
+                    __('Quick "Suggest" button for auto-matching', 'gtin-product-feed-for-google-shopping'),
                 ],
             ],
             'schedule' => [
