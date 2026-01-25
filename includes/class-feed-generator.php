@@ -119,6 +119,10 @@ class GSWC_Feed_Generator {
     private static function get_products() {
         $limit = (int) get_option('gswc_feed_limit', 0);
         $include_outofstock = get_option('gswc_feed_include_outofstock', 'no') === 'yes';
+        $exclude_categories = get_option('gswc_feed_exclude_categories', []);
+        $exclude_tags = get_option('gswc_feed_exclude_tags', []);
+        $min_price = get_option('gswc_feed_min_price', '');
+        $max_price = get_option('gswc_feed_max_price', '');
 
         $args = [
             'status'  => 'publish',
@@ -131,7 +135,55 @@ class GSWC_Feed_Generator {
             $args['stock_status'] = 'instock';
         }
 
-        return wc_get_products($args);
+        // Exclude categories
+        if (!empty($exclude_categories)) {
+            $args['tax_query'] = [
+                [
+                    'taxonomy' => 'product_cat',
+                    'field'    => 'term_id',
+                    'terms'    => array_map('intval', $exclude_categories),
+                    'operator' => 'NOT IN',
+                ],
+            ];
+        }
+
+        // Exclude tags
+        if (!empty($exclude_tags)) {
+            $tag_query = [
+                'taxonomy' => 'product_tag',
+                'field'    => 'term_id',
+                'terms'    => array_map('intval', $exclude_tags),
+                'operator' => 'NOT IN',
+            ];
+
+            if (isset($args['tax_query'])) {
+                $args['tax_query']['relation'] = 'AND';
+                $args['tax_query'][] = $tag_query;
+            } else {
+                $args['tax_query'] = [$tag_query];
+            }
+        }
+
+        $products = wc_get_products($args);
+
+        // Filter by price (post-query since wc_get_products doesn't support price range well)
+        if ($min_price !== '' || $max_price !== '') {
+            $products = array_filter($products, function ($product) use ($min_price, $max_price) {
+                $price = (float) $product->get_price();
+
+                if ($min_price !== '' && $price < (float) $min_price) {
+                    return false;
+                }
+
+                if ($max_price !== '' && $price > (float) $max_price) {
+                    return false;
+                }
+
+                return true;
+            });
+        }
+
+        return array_values($products);
     }
 
     /**
@@ -144,6 +196,19 @@ class GSWC_Feed_Generator {
         $store_name = get_option('gswc_feed_store_name', get_bloginfo('name'));
         $default_brand = get_option('gswc_feed_default_brand', '');
         $default_condition = get_option('gswc_feed_default_condition', 'new');
+
+        // Customization options
+        $title_prefix = get_option('gswc_feed_title_prefix', '');
+        $title_suffix = get_option('gswc_feed_title_suffix', '');
+        $desc_prefix = get_option('gswc_feed_desc_prefix', '');
+        $desc_suffix = get_option('gswc_feed_desc_suffix', '');
+
+        $customization = [
+            'title_prefix' => $title_prefix,
+            'title_suffix' => $title_suffix,
+            'desc_prefix'  => $desc_prefix,
+            'desc_suffix'  => $desc_suffix,
+        ];
 
         $xml = new XMLWriter();
         $xml->openMemory();
@@ -161,7 +226,7 @@ class GSWC_Feed_Generator {
         $xml->writeElement('description', get_bloginfo('description'));
 
         foreach ($products as $product) {
-            self::write_product_item($xml, $product, $default_brand, $default_condition);
+            self::write_product_item($xml, $product, $default_brand, $default_condition, $customization);
         }
 
         $xml->endElement(); // channel
@@ -186,14 +251,15 @@ class GSWC_Feed_Generator {
      * @param WC_Product $product          Product object.
      * @param string     $default_brand    Default brand.
      * @param string     $default_condition Default condition.
+     * @param array      $customization    Customization options.
      */
-    private static function write_product_item($xml, $product, $default_brand, $default_condition) {
+    private static function write_product_item($xml, $product, $default_brand, $default_condition, $customization = []) {
         // Skip variable products (include variations instead)
         if ($product->is_type('variable')) {
             foreach ($product->get_children() as $variation_id) {
                 $variation = wc_get_product($variation_id);
                 if ($variation && $variation->is_purchasable()) {
-                    self::write_product_item($xml, $variation, $default_brand, $default_condition);
+                    self::write_product_item($xml, $variation, $default_brand, $default_condition, $customization);
                 }
             }
             return;
@@ -210,12 +276,27 @@ class GSWC_Feed_Generator {
 
         // Required fields
         $xml->writeElement('g:id', $product->get_sku() ?: $id);
-        $xml->writeElement('title', html_entity_decode(wp_strip_all_tags($product->get_name()), ENT_QUOTES, 'UTF-8'));
+
+        // Title with customization
+        $title = html_entity_decode(wp_strip_all_tags($product->get_name()), ENT_QUOTES, 'UTF-8');
+        if (!empty($customization['title_prefix'])) {
+            $title = $customization['title_prefix'] . ' ' . $title;
+        }
+        if (!empty($customization['title_suffix'])) {
+            $title = $title . ' ' . $customization['title_suffix'];
+        }
+        $xml->writeElement('title', $title);
         $xml->writeElement('link', $product->get_permalink());
 
-        // Description
+        // Description with customization
         $description = $product->get_description() ?: $product->get_short_description();
         $description = html_entity_decode(wp_strip_all_tags($description), ENT_QUOTES, 'UTF-8');
+        if (!empty($customization['desc_prefix'])) {
+            $description = $customization['desc_prefix'] . ' ' . $description;
+        }
+        if (!empty($customization['desc_suffix'])) {
+            $description = $description . ' ' . $customization['desc_suffix'];
+        }
         $description = mb_substr($description, 0, 5000);
         if ($description) {
             $xml->writeElement('description', $description);
