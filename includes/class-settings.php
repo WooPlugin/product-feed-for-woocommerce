@@ -89,7 +89,8 @@ class GSWC_Settings {
                 $pro_badge = ' <span class="gswc-pro-badge-small">Pro</span>';
             }
 
-            echo '<li><a href="' . esc_url($url) . '" class="' . esc_attr($current) . '">' . esc_html($label) . $pro_badge . '</a></li>';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $pro_badge contains static HTML with Pro badge
+            echo '<li><a href="' . esc_url($url) . '" class="' . esc_attr($current) . '">' . esc_html($label) . wp_kses_post($pro_badge) . '</a></li>';
         }
 
         echo '</ul>';
@@ -100,6 +101,7 @@ class GSWC_Settings {
      * Output settings fields with sidebar layout
      */
     public static function output_settings() {
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce global variable
         global $current_section;
         self::$current_section = $current_section;
 

@@ -7,23 +7,27 @@
 
 defined('ABSPATH') || exit;
 
-$feed_url = GSWC_Feed_Generator::get_feed_url('google');
-$feed_file = GSWC_Feed_Generator::get_feed_path('google');
-$feed_exists = file_exists($feed_file);
-$last_generated = get_option('gswc_feed_last_generated', 0);
-$product_count = get_option('gswc_feed_product_count', 0);
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables, not global
+
+$gswc_feed_url = GSWC_Feed_Generator::get_feed_url('google');
+$gswc_feed_file = GSWC_Feed_Generator::get_feed_path('google');
+$gswc_feed_exists = file_exists($gswc_feed_file);
+$gswc_last_generated = get_option('gswc_feed_last_generated', 0);
+$gswc_product_count = get_option('gswc_feed_product_count', 0);
 
 // Get product stats
-$total_products = (int) wp_count_posts('product')->publish;
+$gswc_total_products = (int) wp_count_posts('product')->publish;
 
 // Get promotion data
-$promotion = GSWC_Remote_Data::get_promotion();
-$products_with_gtin = (int) $GLOBALS['wpdb']->get_var(
+$gswc_promotion = GSWC_Remote_Data::get_promotion();
+$gswc_products_with_gtin = (int) $GLOBALS['wpdb']->get_var(
     "SELECT COUNT(DISTINCT post_id) FROM {$GLOBALS['wpdb']->postmeta} WHERE meta_key = '_gswc_gtin' AND meta_value != ''"
 );
-$products_with_brand = (int) $GLOBALS['wpdb']->get_var(
+$gswc_products_with_brand = (int) $GLOBALS['wpdb']->get_var(
     "SELECT COUNT(DISTINCT post_id) FROM {$GLOBALS['wpdb']->postmeta} WHERE meta_key = '_gswc_brand' AND meta_value != ''"
 );
+
+// phpcs:enable
 ?>
 <div class="wrap gswc-dashboard">
     <h1 class="gswc-header">
@@ -32,15 +36,15 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
         <a href="https://wooplugin.pro" target="_blank" class="gswc-brand">by wooplugin.pro</a>
     </h1>
 
-    <?php if ($promotion) : ?>
-        <div class="gswc-dashboard-promo gswc-promo-<?php echo esc_attr($promotion['style'] ?? 'highlight'); ?>">
+    <?php if ($gswc_promotion) : ?>
+        <div class="gswc-dashboard-promo gswc-promo-<?php echo esc_attr($gswc_promotion['style'] ?? 'highlight'); ?>">
             <div class="gswc-promo-content">
-                <span class="gswc-promo-badge"><?php echo esc_html($promotion['title'] ?? __('Special Offer', 'gtin-product-feed-for-google-shopping')); ?></span>
-                <span class="gswc-promo-message"><?php echo esc_html($promotion['message']); ?></span>
-                <?php if (!empty($promotion['code'])) : ?>
+                <span class="gswc-promo-badge"><?php echo esc_html($gswc_promotion['title'] ?? __('Special Offer', 'gtin-product-feed-for-google-shopping')); ?></span>
+                <span class="gswc-promo-message"><?php echo esc_html($gswc_promotion['message']); ?></span>
+                <?php if (!empty($gswc_promotion['code'])) : ?>
                     <span class="gswc-promo-code-inline">
                         <?php esc_html_e('Code:', 'gtin-product-feed-for-google-shopping'); ?>
-                        <code><?php echo esc_html($promotion['code']); ?></code>
+                        <code><?php echo esc_html($gswc_promotion['code']); ?></code>
                     </span>
                 <?php endif; ?>
             </div>
@@ -52,19 +56,19 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
 
     <div class="gswc-stats-grid">
         <div class="gswc-stat-card">
-            <span class="stat-number"><?php echo esc_html($total_products); ?></span>
+            <span class="stat-number"><?php echo esc_html($gswc_total_products); ?></span>
             <span class="stat-label"><?php esc_html_e('Total Products', 'gtin-product-feed-for-google-shopping'); ?></span>
         </div>
         <div class="gswc-stat-card">
-            <span class="stat-number"><?php echo esc_html($product_count); ?></span>
+            <span class="stat-number"><?php echo esc_html($gswc_product_count); ?></span>
             <span class="stat-label"><?php esc_html_e('In Feed', 'gtin-product-feed-for-google-shopping'); ?></span>
         </div>
-        <div class="gswc-stat-card <?php echo $products_with_gtin > 0 ? 'success' : ''; ?>">
-            <span class="stat-number"><?php echo esc_html($products_with_gtin); ?></span>
+        <div class="gswc-stat-card <?php echo $gswc_products_with_gtin > 0 ? 'success' : ''; ?>">
+            <span class="stat-number"><?php echo esc_html($gswc_products_with_gtin); ?></span>
             <span class="stat-label"><?php esc_html_e('With GTIN', 'gtin-product-feed-for-google-shopping'); ?></span>
         </div>
-        <div class="gswc-stat-card <?php echo $products_with_brand > 0 ? 'success' : ''; ?>">
-            <span class="stat-number"><?php echo esc_html($products_with_brand); ?></span>
+        <div class="gswc-stat-card <?php echo $gswc_products_with_brand > 0 ? 'success' : ''; ?>">
+            <span class="stat-number"><?php echo esc_html($gswc_products_with_brand); ?></span>
             <span class="stat-label"><?php esc_html_e('With Brand', 'gtin-product-feed-for-google-shopping'); ?></span>
         </div>
     </div>
@@ -73,7 +77,7 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
         <div class="gswc-card">
             <h2><?php esc_html_e('Feed Status', 'gtin-product-feed-for-google-shopping'); ?></h2>
 
-            <?php if ($feed_exists) : ?>
+            <?php if ($gswc_feed_exists) : ?>
                 <div class="gswc-notice success">
                     <?php esc_html_e('Feed is active and accessible.', 'gtin-product-feed-for-google-shopping'); ?>
                 </div>
@@ -83,9 +87,9 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
                         <th><?php esc_html_e('Feed URL', 'gtin-product-feed-for-google-shopping'); ?></th>
                         <td>
                             <div class="gswc-feed-url-row">
-                                <input type="text" class="gswc-feed-url-input" value="<?php echo esc_url($feed_url); ?>" readonly onclick="this.select();" />
-                                <a href="<?php echo esc_url($feed_url); ?>" target="_blank" class="button button-small" title="<?php esc_attr_e('Open feed', 'gtin-product-feed-for-google-shopping'); ?>">↗</a>
-                                <button type="button" class="button button-small gswc-copy-url" data-url="<?php echo esc_attr($feed_url); ?>">
+                                <input type="text" class="gswc-feed-url-input" value="<?php echo esc_url($gswc_feed_url); ?>" readonly onclick="this.select();" />
+                                <a href="<?php echo esc_url($gswc_feed_url); ?>" target="_blank" class="button button-small" title="<?php esc_attr_e('Open feed', 'gtin-product-feed-for-google-shopping'); ?>">↗</a>
+                                <button type="button" class="button button-small gswc-copy-url" data-url="<?php echo esc_attr($gswc_feed_url); ?>">
                                     <?php esc_html_e('Copy', 'gtin-product-feed-for-google-shopping'); ?>
                                 </button>
                             </div>
@@ -93,16 +97,16 @@ $products_with_brand = (int) $GLOBALS['wpdb']->get_var(
                     </tr>
                     <tr>
                         <th><?php esc_html_e('Products in Feed', 'gtin-product-feed-for-google-shopping'); ?></th>
-                        <td id="gswc-feed-count"><?php echo esc_html($product_count); ?></td>
+                        <td id="gswc-feed-count"><?php echo esc_html($gswc_product_count); ?></td>
                     </tr>
                     <tr>
                         <th><?php esc_html_e('Last Generated', 'gtin-product-feed-for-google-shopping'); ?></th>
                         <td id="gswc-feed-time">
                             <?php
-                            if ($last_generated) {
-                                echo esc_html(wp_date(get_option('date_format') . ' ' . get_option('time_format'), $last_generated));
+                            if ($gswc_last_generated) {
+                                echo esc_html(wp_date(get_option('date_format') . ' ' . get_option('time_format'), $gswc_last_generated));
                                 echo ' (';
-                                echo esc_html(human_time_diff($last_generated, time()));
+                                echo esc_html(human_time_diff($gswc_last_generated, time()));
                                 echo ' ' . esc_html__('ago', 'gtin-product-feed-for-google-shopping') . ')';
                             } else {
                                 esc_html_e('Never', 'gtin-product-feed-for-google-shopping');

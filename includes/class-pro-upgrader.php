@@ -86,7 +86,7 @@ class GSWC_Pro_Upgrader {
             wp_send_json_error(['message' => __('Permission denied.', 'gtin-product-feed-for-google-shopping')]);
         }
 
-        $license_key = sanitize_text_field($_POST['license_key'] ?? '');
+        $license_key = isset($_POST['license_key']) ? sanitize_text_field(wp_unslash($_POST['license_key'])) : '';
         if (empty($license_key)) {
             wp_send_json_error(['message' => __('Please enter a license key.', 'gtin-product-feed-for-google-shopping')]);
         }
@@ -133,7 +133,7 @@ class GSWC_Pro_Upgrader {
             wp_send_json_error(['message' => __('Permission denied.', 'gtin-product-feed-for-google-shopping')]);
         }
 
-        $download_url = esc_url_raw($_POST['download_url'] ?? '');
+        $download_url = isset($_POST['download_url']) ? esc_url_raw(wp_unslash($_POST['download_url'])) : '';
         if (empty($download_url)) {
             wp_send_json_error(['message' => __('Download URL is missing.', 'gtin-product-feed-for-google-shopping')]);
         }

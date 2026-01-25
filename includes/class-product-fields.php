@@ -372,9 +372,12 @@ class GSWC_Product_Fields {
      * @param int $post_id Product ID.
      */
     public static function save_product_fields($post_id) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce in woocommerce_process_product_meta
         foreach (self::$fields as $key => $field) {
             $field_key = '_gswc_' . $key;
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce
             if (isset($_POST[$field_key])) {
+                // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce
                 update_post_meta($post_id, $field_key, sanitize_text_field(wp_unslash($_POST[$field_key])));
             }
         }
@@ -386,9 +389,12 @@ class GSWC_Product_Fields {
      * @param int $post_id Product ID.
      */
     public static function save_simple_product_fields($post_id) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce
         foreach (self::$fields as $key => $field) {
             $field_key = '_gswc_' . $key;
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce
             if (isset($_POST[$field_key])) {
+                // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce
                 update_post_meta($post_id, $field_key, sanitize_text_field(wp_unslash($_POST[$field_key])));
             }
         }
@@ -445,9 +451,12 @@ class GSWC_Product_Fields {
      * @param int $i            Loop index.
      */
     public static function save_variation_fields($variation_id, $i) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce in woocommerce_save_product_variation
         foreach (self::$fields as $key => $field) {
             $field_key = '_gswc_' . $key;
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce
             if (isset($_POST[$field_key][$i])) {
+                // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce
                 update_post_meta($variation_id, $field_key, sanitize_text_field(wp_unslash($_POST[$field_key][$i])));
             }
         }
@@ -522,10 +531,14 @@ class GSWC_Product_Fields {
      * @param WC_Product $product Product object.
      */
     public static function save_quick_edit_fields($product) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified by WooCommerce in woocommerce_product_quick_edit_save
         if (isset($_REQUEST['_gswc_gtin'])) {
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified by WooCommerce
             update_post_meta($product->get_id(), '_gswc_gtin', sanitize_text_field(wp_unslash($_REQUEST['_gswc_gtin'])));
         }
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified by WooCommerce
         if (isset($_REQUEST['_gswc_brand'])) {
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified by WooCommerce
             update_post_meta($product->get_id(), '_gswc_brand', sanitize_text_field(wp_unslash($_REQUEST['_gswc_brand'])));
         }
     }
