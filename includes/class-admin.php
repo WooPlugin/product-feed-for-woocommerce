@@ -154,12 +154,10 @@ class GSWC_Admin {
 
         $current_section = $section_map[$page] ?? '';
 
-        ?>
-        <div class="wrap">
-            <h1><?php esc_html_e('GTIN Product Feed Settings', 'gtin-product-feed-for-google-shopping'); ?></h1>
-            <?php GSWC_Settings::output_settings_page($current_section); ?>
-        </div>
-        <?php
+        // Output settings page with wrapper
+        echo '<div class="wrap">';
+        GSWC_Settings::output_settings_page($current_section);
+        echo '</div>';
     }
 
     /**
@@ -316,7 +314,7 @@ class GSWC_Admin {
                 <span id="gswc-widget-spinner" class="spinner"></span>
                 <span id="gswc-widget-result"></span>
 
-                <a href="<?php echo esc_url(admin_url('admin.php?page=gswc-general')); ?>" class="gswc-widget-settings">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=gswc-feeds')); ?>" class="gswc-widget-settings">
                     <?php esc_html_e('Settings', 'gtin-product-feed-for-google-shopping'); ?> →
                 </a>
             </div>

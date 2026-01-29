@@ -1038,3 +1038,535 @@
 @media screen and (max-width: 1200px) {
     /* Settings page now uses single column layout */
 }
+
+/* ==========================================================================
+   Settings Page Layout (New)
+   ========================================================================== */
+
+.gswc-settings-wrapper {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+    align-items: flex-start;
+}
+
+/* Sidebar Navigation */
+.gswc-settings-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 32px;
+}
+
+.gswc-settings-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.gswc-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #374151;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.15s ease;
+}
+
+.gswc-nav-item:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.gswc-nav-item.active {
+    background: #4285f4;
+    color: #fff;
+}
+
+.gswc-nav-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gswc-nav-label {
+    flex: 1;
+}
+
+.gswc-sidebar-footer {
+    margin-top: 16px;
+}
+
+.gswc-help-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.gswc-help-link:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.gswc-help-link .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Main Content Area */
+.gswc-settings-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.gswc-content-header {
+    margin-bottom: 20px;
+}
+
+.gswc-page-title {
+    font-size: 23px;
+    font-weight: 400;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.gswc-page-description {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Content Card */
+.gswc-content-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Inline Form Fields */
+.gswc-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.gswc-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.gswc-field-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1e1e1e;
+}
+
+.gswc-field-input {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.gswc-input-text,
+.gswc-input-number,
+.gswc-select,
+.gswc-multiselect {
+    width: 400px;
+    max-width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.gswc-input-text:focus,
+.gswc-input-number:focus,
+.gswc-select:focus,
+.gswc-multiselect:focus {
+    outline: none;
+    border-color: #4285f4;
+    box-shadow: 0 0 0 1px #4285f4;
+}
+
+.gswc-input-number {
+    width: 120px;
+}
+
+.gswc-field-description {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.gswc-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.gswc-checkbox-label input[type="checkbox"] {
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Form Actions */
+.gswc-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* ==========================================================================
+   Feed Channel Card
+   ========================================================================== */
+
+.gswc-feed-channel-card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.gswc-feed-channel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.gswc-feed-channel-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.gswc-feed-channel-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+    border-radius: 8px;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.gswc-feed-channel-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.gswc-feed-channel-info h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e1e1e;
+    margin: 0 0 6px 0;
+}
+
+.gswc-feed-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.gswc-feed-status-badge .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+.gswc-status-active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.gswc-status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.gswc-status-inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+/* Toggle Switch */
+.gswc-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.gswc-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.gswc-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #d1d5db;
+    transition: 0.3s;
+    border-radius: 26px;
+}
+
+.gswc-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.gswc-toggle-switch input:checked + .gswc-toggle-slider {
+    background-color: #4285f4;
+}
+
+.gswc-toggle-switch input:checked + .gswc-toggle-slider:before {
+    transform: translateX(22px);
+}
+
+.gswc-toggle-switch input:focus + .gswc-toggle-slider {
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+}
+
+/* Feed Channel Body */
+.gswc-feed-channel-body {
+    padding: 24px;
+}
+
+.gswc-feed-stats-row {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 24px;
+}
+
+.gswc-feed-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.gswc-feed-stat-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gswc-feed-stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.gswc-feed-url-section {
+    margin-bottom: 24px;
+}
+
+.gswc-feed-url-section label {
+    display: block;
+    font-weight: 500;
+    color: #6b7280;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.gswc-feed-url-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gswc-feed-url-input {
+    flex: 1;
+    font-size: 13px;
+    padding: 8px 12px;
+    font-family: monospace;
+    background: #f9f9f9;
+}
+
+.gswc-feed-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.gswc-feed-actions .spinner {
+    float: none;
+    margin: 0;
+}
+
+.gswc-feed-actions #gswc-feed-result {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.gswc-feed-actions #gswc-feed-result.success {
+    color: #16a34a;
+}
+
+.gswc-feed-actions #gswc-feed-result.error {
+    color: #dc2626;
+}
+
+.gswc-feed-actions .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gswc-feed-actions .button .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Feed Options Info */
+.gswc-feed-options-info {
+    margin-top: 24px;
+    padding: 20px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+}
+
+.gswc-feed-options-info h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #075985;
+    margin: 0 0 8px 0;
+}
+
+.gswc-feed-options-info h4 .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.gswc-feed-options-info p {
+    font-size: 13px;
+    color: #0c4a6e;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   Settings Responsive Design
+   ========================================================================== */
+
+@media screen and (max-width: 1200px) {
+    .gswc-settings-wrapper {
+        flex-direction: column;
+    }
+
+    .gswc-settings-sidebar {
+        width: 100%;
+        position: static;
+    }
+
+    .gswc-settings-nav {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .gswc-nav-item {
+        white-space: nowrap;
+    }
+
+    .gswc-feed-stats-row {
+        flex-wrap: wrap;
+        gap: 24px;
+    }
+}
+
+@media screen and (max-width: 782px) {
+    .gswc-content-card {
+        padding: 20px;
+    }
+
+    .gswc-input-text,
+    .gswc-select,
+    .gswc-multiselect {
+        width: 100%;
+    }
+
+    .gswc-feed-channel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .gswc-feed-stats-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .gswc-feed-url-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .gswc-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .gswc-form-actions .button {
+        width: 100%;
+        justify-content: center;
+    }
+}

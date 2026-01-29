@@ -58,35 +58,239 @@ class GSWC_Settings {
     public static function output_settings_page($current_section = '') {
         self::$current_section = $current_section;
 
+        // Get current page for navigation highlighting
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : 'gswc-general';
+
+        // Section definitions with labels and icons
+        $sections = [
+            'gswc-general'    => [
+                'label' => __('General', 'gtin-product-feed-for-google-shopping'),
+                'icon' => 'dashicons-admin-generic',
+                'desc' => __('Configure basic feed settings and defaults', 'gtin-product-feed-for-google-shopping'),
+            ],
+            'gswc-feeds'      => [
+                'label' => __('Feeds', 'gtin-product-feed-for-google-shopping'),
+                'icon' => 'dashicons-rss',
+                'desc' => __('Manage feed channels and generation options', 'gtin-product-feed-for-google-shopping'),
+            ],
+            'gswc-filters'    => [
+                'label' => __('Filters', 'gtin-product-feed-for-google-shopping'),
+                'icon' => 'dashicons-filter',
+                'desc' => __('Filter which products appear in your feed', 'gtin-product-feed-for-google-shopping'),
+            ],
+            'gswc-customize' => [
+                'label' => __('Customize', 'gtin-product-feed-for-google-shopping'),
+                'icon' => 'dashicons-edit',
+                'desc' => __('Customize product titles and descriptions', 'gtin-product-feed-for-google-shopping'),
+            ],
+        ];
+
+        $current_section_data = $sections[$page] ?? $sections['gswc-general'];
+
         // Show save notice
         if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
-            echo '<div class="notice notice-success"><p>' . esc_html__('Settings saved.', 'gtin-product-feed-for-google-shopping') . '</p></div>';
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Settings saved.', 'gtin-product-feed-for-google-shopping') . '</p></div>';
         }
 
         ?>
         <div class="gswc-settings-wrapper">
-            <div class="gswc-settings-main">
-                <div class="gswc-content-card">
-                    <form method="post" action="">
-                        <?php wp_nonce_field('gswc_settings_nonce', 'gswc_settings_nonce'); ?>
-                        <input type="hidden" name="gswc_action" value="save_settings" />
-                        <input type="hidden" name="gswc_section" value="<?php echo esc_attr($current_section); ?>" />
-                        <table class="form-table">
-                            <?php
-                            $settings = self::get_settings_for_section($current_section);
-                            self::render_settings_fields($settings);
-                            ?>
-                        </table>
-                        <?php submit_button(__('Save Changes', 'gtin-product-feed-for-google-shopping')); ?>
-                    </form>
+            <!-- Sidebar Navigation -->
+            <aside class="gswc-settings-sidebar">
+                <nav class="gswc-settings-nav">
+                    <?php foreach ($sections as $slug => $section) : ?>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=' . $slug)); ?>"
+                           class="gswc-nav-item <?php echo $page === $slug ? 'active' : ''; ?>">
+                            <span class="gswc-nav-icon dashicons <?php echo esc_attr($section['icon']); ?>"></span>
+                            <span class="gswc-nav-label"><?php echo esc_html($section['label']); ?></span>
+                        </a>
+                    <?php endforeach; ?>
+                </nav>
+
+                <div class="gswc-sidebar-footer">
+                    <a href="https://woocommerce.com/documentation/google-product-feed-for-woocommerce/" target="_blank" class="gswc-help-link">
+                        <span class="dashicons dashicons-editor-help"></span>
+                        <?php esc_html_e('Help & Documentation', 'gtin-product-feed-for-google-shopping'); ?>
+                    </a>
                 </div>
-            </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="gswc-settings-main">
+                <div class="gswc-content-header">
+                    <h1 class="gswc-page-title"><?php echo esc_html($current_section_data['label']); ?></h1>
+                    <?php if ($current_section_data['desc']) : ?>
+                        <p class="gswc-page-description"><?php echo esc_html($current_section_data['desc']); ?></p>
+                    <?php endif; ?>
+                </div>
+
+                <div class="gswc-content-card">
+                    <?php if ($page === 'gswc-feeds') : ?>
+                        <?php self::render_feeds_page_content(); ?>
+                    <?php else : ?>
+                        <form method="post" action="">
+                            <?php wp_nonce_field('gswc_settings_nonce', 'gswc_settings_nonce'); ?>
+                            <input type="hidden" name="gswc_action" value="save_settings" />
+                            <input type="hidden" name="gswc_section" value="<?php echo esc_attr($current_section); ?>" />
+                            <input type="hidden" name="gswc_page" value="<?php echo esc_attr($page); ?>" />
+                            <div class="gswc-form-fields">
+                                <?php
+                                $settings = self::get_settings_for_section($current_section);
+                                self::render_settings_fields($settings);
+                                ?>
+                            </div>
+                            <div class="gswc-form-actions">
+                                <button type="submit" class="button button-primary">
+                                    <?php esc_html_e('Save Changes', 'gtin-product-feed-for-google-shopping'); ?>
+                                </button>
+                                <a href="<?php echo esc_url(GSWC_Feed_Generator::get_feed_url('google')); ?>" target="_blank" class="button">
+                                    <?php esc_html_e('View Feed', 'gtin-product-feed-for-google-shopping'); ?>
+                                </a>
+                            </div>
+                        </form>
+                    <?php endif; ?>
+                </div>
+            </main>
         </div>
         <?php
     }
 
     /**
-     * Render settings fields
+     * Render feeds page content (special layout for feeds section)
+     */
+    private static function render_feeds_page_content() {
+        $feed_url = GSWC_Feed_Generator::get_feed_url('google');
+        $feed_file = GSWC_Feed_Generator::get_feed_path('google');
+        $feed_exists = file_exists($feed_file);
+        $last_generated = get_option('gswc_feed_last_generated', 0);
+        $product_count = get_option('gswc_feed_product_count', 0);
+        $feed_enabled = get_option('gswc_feed_enabled', 'yes') === 'yes';
+        $file_size = $feed_exists ? size_format(filesize($feed_file), 1) : '0 B';
+
+        ?>
+        <form method="post" action="">
+            <?php wp_nonce_field('gswc_settings_nonce', 'gswc_settings_nonce'); ?>
+            <input type="hidden" name="gswc_action" value="save_feed_settings" />
+            <input type="hidden" name="gswc_page" value="gswc-feeds" />
+
+            <!-- Google Shopping Feed Card -->
+            <div class="gswc-feed-channel-card">
+                <div class="gswc-feed-channel-header">
+                    <div class="gswc-feed-channel-info">
+                        <div class="gswc-feed-channel-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3><?php esc_html_e('Google Shopping', 'gtin-product-feed-for-google-shopping'); ?></h3>
+                            <?php if ($feed_enabled && $feed_exists) : ?>
+                                <span class="gswc-feed-status-badge gswc-status-active">
+                                    <span class="dashicons dashicons-yes-alt"></span>
+                                    <?php esc_html_e('Enabled', 'gtin-product-feed-for-google-shopping'); ?>
+                                </span>
+                            <?php elseif ($feed_enabled) : ?>
+                                <span class="gswc-feed-status-badge gswc-status-pending">
+                                    <span class="dashicons dashicons-update"></span>
+                                    <?php esc_html_e('Enabled - Not Generated', 'gtin-product-feed-for-google-shopping'); ?>
+                                </span>
+                            <?php else : ?>
+                                <span class="gswc-feed-status-badge gswc-status-inactive">
+                                    <span class="dashicons dashicons-dismiss"></span>
+                                    <?php esc_html_e('Disabled', 'gtin-product-feed-for-google-shopping'); ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <label class="gswc-toggle-switch">
+                        <input type="checkbox" name="gswc_feed_enabled" value="1" <?php checked($feed_enabled); ?> />
+                        <span class="gswc-toggle-slider"></span>
+                    </label>
+                </div>
+
+                <?php if ($feed_enabled) : ?>
+                    <div class="gswc-feed-channel-body">
+                        <div class="gswc-feed-stats-row">
+                            <div class="gswc-feed-stat">
+                                <span class="gswc-feed-stat-label"><?php esc_html_e('Products', 'gtin-product-feed-for-google-shopping'); ?></span>
+                                <span class="gswc-feed-stat-value"><?php echo esc_html($product_count); ?></span>
+                            </div>
+                            <div class="gswc-feed-stat">
+                                <span class="gswc-feed-stat-label"><?php esc_html_e('File Size', 'gtin-product-feed-for-google-shopping'); ?></span>
+                                <span class="gswc-feed-stat-value"><?php echo esc_html($file_size); ?></span>
+                            </div>
+                            <div class="gswc-feed-stat">
+                                <span class="gswc-feed-stat-label"><?php esc_html_e('Last Generated', 'gtin-product-feed-for-google-shopping'); ?></span>
+                                <span class="gswc-feed-stat-value">
+                                    <?php
+                                    if ($last_generated) {
+                                        echo esc_html(human_time_diff($last_generated, time()));
+                                    } else {
+                                        esc_html_e('Never', 'gtin-product-feed-for-google-shopping');
+                                    }
+                                    ?>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="gswc-feed-url-section">
+                            <label><?php esc_html_e('Feed URL', 'gtin-product-feed-for-google-shopping'); ?></label>
+                            <div class="gswc-feed-url-row">
+                                <input type="text" class="gswc-feed-url-input" value="<?php echo esc_url($feed_url); ?>" readonly onclick="this.select();" />
+                                <button type="button" class="button button-small gswc-copy-url" data-url="<?php echo esc_attr($feed_url); ?>">
+                                    <span class="dashicons dashicons-admin-page"></span>
+                                    <?php esc_html_e('Copy', 'gtin-product-feed-for-google-shopping'); ?>
+                                </button>
+                                <?php if ($feed_exists) : ?>
+                                    <a href="<?php echo esc_url($feed_url); ?>" target="_blank" class="button button-small">
+                                        <span class="dashicons dashicons-external"></span>
+                                        <?php esc_html_e('Open', 'gtin-product-feed-for-google-shopping'); ?>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div class="gswc-feed-actions">
+                            <span id="gswc-feed-result"></span>
+                            <span id="gswc-feed-spinner" class="spinner"></span>
+                            <button type="button" id="gswc-generate-feed" class="button button-primary">
+                                <span class="dashicons dashicons-update-alt"></span>
+                                <?php esc_html_e('Generate Feed', 'gtin-product-feed-for-google-shopping'); ?>
+                            </button>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Feed Options Info -->
+            <div class="gswc-feed-options-info">
+                <h4>
+                    <span class="dashicons dashicons-info"></span>
+                    <?php esc_html_e('About Feed Options', 'gtin-product-feed-for-google-shopping'); ?>
+                </h4>
+                <p>
+                    <?php esc_html_e('Enable or disable this feed to control whether it is generated. When disabled, the feed file will not be created or updated. This is useful if you want to temporarily stop generating a feed without losing your settings.', 'gtin-product-feed-for-google-shopping'); ?>
+                </p>
+            </div>
+
+            <div class="gswc-form-actions">
+                <button type="submit" class="button button-primary">
+                    <?php esc_html_e('Save Changes', 'gtin-product-feed-for-google-shopping'); ?>
+                </button>
+                <?php if ($feed_exists) : ?>
+                    <a href="<?php echo esc_url($feed_url); ?>" target="_blank" class="button">
+                        <?php esc_html_e('View Feed', 'gtin-product-feed-for-google-shopping'); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </form>
+        <?php
+    }
+
+    /**
+     * Render settings fields (inline layout)
      *
      * @param array $settings Settings array.
      */
@@ -100,14 +304,7 @@ class GSWC_Settings {
 
             // Handle special field types
             if (in_array($type, ['title', 'sectionend'], true)) {
-                if ($type === 'title') {
-                    echo '<tr><th colspan="2"><h3>' . esc_html($title) . '</h3>';
-                    if ($desc) {
-                        echo '<p>' . esc_html($desc) . '</p>';
-                    }
-                    echo '</th></tr>';
-                }
-                continue;
+                continue; // Skip section dividers in inline layout
             }
 
             // Handle custom field types
@@ -119,27 +316,26 @@ class GSWC_Settings {
                 continue;
             }
 
-            // Standard field types
-            echo '<tr valign="top">';
-            echo '<th scope="row" class="titledesc">';
-            echo '<label for="' . esc_attr($id) . '">' . esc_html($title) . '</label>';
-            echo '</th>';
-            echo '<td class="forminp">';
+            // Render field
+            echo '<div class="gswc-form-field">';
+            echo '<label for="' . esc_attr($id) . '" class="gswc-field-label">' . esc_html($title) . '</label>';
+
+            echo '<div class="gswc-field-input">';
 
             switch ($type) {
                 case 'text':
-                    echo '<input type="text" name="' . esc_attr($id) . '" id="' . esc_attr($id) . '" value="' . esc_attr($value) . '" class="regular-text" />';
+                    echo '<input type="text" name="' . esc_attr($id) . '" id="' . esc_attr($id) . '" value="' . esc_attr($value) . '" class="gswc-input-text" />';
                     break;
                 case 'number':
                     $min = $field['custom_attributes']['min'] ?? '';
                     $step = $field['custom_attributes']['step'] ?? '';
-                    echo '<input type="number" name="' . esc_attr($id) . '" id="' . esc_attr($id) . '" value="' . esc_attr($value) . '" class="small-text"';
+                    echo '<input type="number" name="' . esc_attr($id) . '" id="' . esc_attr($id) . '" value="' . esc_attr($value) . '" class="gswc-input-number"';
                     if ($min) echo ' min="' . esc_attr($min) . '"';
                     if ($step) echo ' step="' . esc_attr($step) . '"';
                     echo ' />';
                     break;
                 case 'select':
-                    echo '<select name="' . esc_attr($id) . '" id="' . esc_attr($id) . '">';
+                    echo '<select name="' . esc_attr($id) . '" id="' . esc_attr($id) . '" class="gswc-select">';
                     foreach ($field['options'] as $opt_value => $opt_label) {
                         echo '<option value="' . esc_attr($opt_value) . '" ' . selected($value, $opt_value, false) . '>' . esc_html($opt_label) . '</option>';
                     }
@@ -147,12 +343,13 @@ class GSWC_Settings {
                     break;
                 case 'checkbox':
                     $checked = $value === 'yes' ? 'checked="checked"' : '';
-                    echo '<label><input type="checkbox" name="' . esc_attr($id) . '" id="' . esc_attr($id) . '" value="1" ' . $checked . ' /> ';
-                    echo esc_html($title);
+                    echo '<label class="gswc-checkbox-label">';
+                    echo '<input type="checkbox" name="' . esc_attr($id) . '" id="' . esc_attr($id) . '" value="1" ' . $checked . ' /> ';
+                    echo '<span>' . esc_html($desc) . '</span>';
                     echo '</label>';
                     break;
                 case 'multiselect':
-                    echo '<select name="' . esc_attr($id) . '[]" id="' . esc_attr($id) . '" multiple="multiple" class="wc-enhanced-select" style="width: 400px;">';
+                    echo '<select name="' . esc_attr($id) . '[]" id="' . esc_attr($id) . '" multiple="multiple" class="wc-enhanced-select gswc-multiselect">';
                     foreach ($field['options'] as $opt_value => $opt_label) {
                         $selected = is_array($value) && in_array($opt_value, $value, true) ? 'selected="selected"' : '';
                         echo '<option value="' . esc_attr($opt_value) . '" ' . $selected . '>' . esc_html($opt_label) . '</option>';
@@ -162,11 +359,11 @@ class GSWC_Settings {
             }
 
             if ($desc && $type !== 'checkbox') {
-                echo '<p class="description">' . esc_html($desc) . '</p>';
+                echo '<p class="gswc-field-description">' . esc_html($desc) . '</p>';
             }
 
-            echo '</td>';
-            echo '</tr>';
+            echo '</div>';
+            echo '</div>';
         }
     }
 
@@ -175,7 +372,9 @@ class GSWC_Settings {
      */
     public static function handle_settings_save() {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        if (!isset($_POST['gswc_action']) || $_POST['gswc_action'] !== 'save_settings') {
+        $action = isset($_POST['gswc_action']) ? sanitize_text_field(wp_unslash($_POST['gswc_action'])) : '';
+
+        if (!in_array($action, ['save_settings', 'save_feed_settings'], true)) {
             return;
         }
 
@@ -189,6 +388,21 @@ class GSWC_Settings {
             return;
         }
 
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $page = isset($_POST['gswc_page']) ? sanitize_text_field(wp_unslash($_POST['gswc_page'])) : 'gswc-general';
+
+        // Handle feed settings save
+        if ($action === 'save_feed_settings') {
+            // Save feed enabled setting
+            $feed_enabled = isset($_POST['gswc_feed_enabled']) ? 'yes' : 'no';
+            update_option('gswc_feed_enabled', $feed_enabled);
+
+            // Redirect with success message
+            wp_redirect(admin_url('admin.php?page=' . $page . '&settings-updated=true'));
+            exit;
+        }
+
+        // Handle regular settings save
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $section = isset($_POST['gswc_section']) ? sanitize_text_field(wp_unslash($_POST['gswc_section'])) : '';
 
