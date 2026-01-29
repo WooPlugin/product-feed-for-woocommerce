@@ -18,8 +18,6 @@ $gswc_product_count = get_option('gswc_feed_product_count', 0);
 // Get product stats
 $gswc_total_products = (int) wp_count_posts('product')->publish;
 
-// Get promotion data
-$gswc_promotion = GSWC_Remote_Data::get_promotion();
 $gswc_products_with_gtin = (int) $GLOBALS['wpdb']->get_var(
     "SELECT COUNT(DISTINCT post_id) FROM {$GLOBALS['wpdb']->postmeta} WHERE meta_key = '_gswc_gtin' AND meta_value != ''"
 );
@@ -33,26 +31,7 @@ $gswc_products_with_brand = (int) $GLOBALS['wpdb']->get_var(
     <h1 class="gswc-header">
         <span class="gswc-logo">GTIN Product Feed</span>
         <?php esc_html_e('for Google Shopping', 'gtin-product-feed-for-google-shopping'); ?>
-        <a href="https://wooplugin.pro" target="_blank" class="gswc-brand">by wooplugin.pro</a>
     </h1>
-
-    <?php if ($gswc_promotion) : ?>
-        <div class="gswc-dashboard-promo gswc-promo-<?php echo esc_attr($gswc_promotion['style'] ?? 'highlight'); ?>">
-            <div class="gswc-promo-content">
-                <span class="gswc-promo-badge"><?php echo esc_html($gswc_promotion['title'] ?? __('Special Offer', 'gtin-product-feed-for-google-shopping')); ?></span>
-                <span class="gswc-promo-message"><?php echo esc_html($gswc_promotion['message']); ?></span>
-                <?php if (!empty($gswc_promotion['code'])) : ?>
-                    <span class="gswc-promo-code-inline">
-                        <?php esc_html_e('Code:', 'gtin-product-feed-for-google-shopping'); ?>
-                        <code><?php echo esc_html($gswc_promotion['code']); ?></code>
-                    </span>
-                <?php endif; ?>
-            </div>
-            <a href="<?php echo esc_url(GSWC_PRO_URL); ?>" class="button button-primary" target="_blank">
-                <?php esc_html_e('Get Pro', 'gtin-product-feed-for-google-shopping'); ?>
-            </a>
-        </div>
-    <?php endif; ?>
 
     <div class="gswc-stats-grid">
         <div class="gswc-stat-card">
@@ -117,9 +96,7 @@ $gswc_products_with_brand = (int) $GLOBALS['wpdb']->get_var(
                     <tr>
                         <th><?php esc_html_e('Auto-Update', 'gtin-product-feed-for-google-shopping'); ?></th>
                         <td>
-                            <a href="<?php echo esc_url(GSWC_PRO_URL); ?>" style="color: #4285f4;">
-                                <?php esc_html_e('Upgrade to Pro', 'gtin-product-feed-for-google-shopping'); ?>
-                            </a>
+                            <span class="gswc-status-badge"><?php esc_html_e('Manual only', 'gtin-product-feed-for-google-shopping'); ?></span>
                         </td>
                     </tr>
                 </table>
@@ -130,7 +107,7 @@ $gswc_products_with_brand = (int) $GLOBALS['wpdb']->get_var(
             <?php endif; ?>
 
             <div class="gswc-actions">
-                <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=gswc_feed')); ?>" class="button">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=gswc-general')); ?>" class="button">
                     <?php esc_html_e('Settings', 'gtin-product-feed-for-google-shopping'); ?>
                 </a>
 
@@ -143,13 +120,6 @@ $gswc_products_with_brand = (int) $GLOBALS['wpdb']->get_var(
         </div>
 
         <div class="gswc-column-right">
-            <?php
-            // Show upgrade UI if Pro is not active
-            if (!GSWC_Pro_Upgrader::is_pro_active()) {
-                GSWC_Pro_Upgrader::render_upgrade_ui();
-            }
-            ?>
-
             <div class="gswc-card">
                 <h2><?php esc_html_e('Quick Start', 'gtin-product-feed-for-google-shopping'); ?></h2>
 
@@ -165,7 +135,7 @@ $gswc_products_with_brand = (int) $GLOBALS['wpdb']->get_var(
                         printf(
                             /* translators: %s: link to settings */
                             esc_html__('Set your default brand and other options in %s.', 'gtin-product-feed-for-google-shopping'),
-                            '<a href="' . esc_url(admin_url('admin.php?page=wc-settings&tab=gswc_feed')) . '">' . esc_html__('Settings', 'gtin-product-feed-for-google-shopping') . '</a>'
+                            '<a href="' . esc_url(admin_url('admin.php?page=gswc-general')) . '">' . esc_html__('Settings', 'gtin-product-feed-for-google-shopping') . '</a>'
                         );
                         ?>
                     </p>
@@ -184,7 +154,6 @@ $gswc_products_with_brand = (int) $GLOBALS['wpdb']->get_var(
     </div>
 
     <p class="gswc-footer">
-        Google Shopping for WooCommerce v<?php echo esc_html(GSWC_VERSION); ?> &middot;
-        <a href="https://wooplugin.pro/google-shopping-pro" target="_blank">wooplugin.pro</a>
+        Google Shopping for WooCommerce v<?php echo esc_html(GSWC_VERSION); ?>
     </p>
 </div>

@@ -109,22 +109,8 @@ class GSWC_Product_Fields {
      */
     public static function add_product_data_panel() {
         global $post;
-        $promotion = GSWC_Remote_Data::get_promotion();
         ?>
         <div id="gswc_google_shopping_data" class="panel woocommerce_options_panel">
-            <?php if ($promotion) : ?>
-                <div class="gswc-panel-promo gswc-promo-<?php echo esc_attr($promotion['style'] ?? 'highlight'); ?>">
-                    <span class="gswc-promo-badge"><?php echo esc_html($promotion['title']); ?></span>
-                    <span class="gswc-promo-text"><?php echo esc_html($promotion['message']); ?></span>
-                    <?php if (!empty($promotion['code'])) : ?>
-                        <code class="gswc-promo-code"><?php echo esc_html($promotion['code']); ?></code>
-                    <?php endif; ?>
-                    <a href="<?php echo esc_url(GSWC_PRO_URL); ?>" class="gswc-promo-link" target="_blank">
-                        <?php esc_html_e('Get Pro', 'gtin-product-feed-for-google-shopping'); ?> →
-                    </a>
-                </div>
-            <?php endif; ?>
-
             <div class="options_group">
                 <p class="form-field">
                     <span class="gswc-panel-title">
@@ -161,43 +147,6 @@ class GSWC_Product_Fields {
                 }
                 ?>
             </div>
-
-            <?php self::output_pro_upsell(); ?>
-        </div>
-        <?php
-    }
-
-    /**
-     * Output Pro upsell section
-     */
-    private static function output_pro_upsell() {
-        $pro = GSWC_Remote_Data::get_pro_pricing();
-        ?>
-        <div class="options_group gswc-pro-upsell-panel">
-            <div class="gswc-pro-card">
-                <div class="gswc-pro-features">
-                    <p class="gswc-pro-title">
-                        <strong><?php esc_html_e('Need more options?', 'gtin-product-feed-for-google-shopping'); ?></strong>
-                        <span><?php esc_html_e('Upgrade to Pro', 'gtin-product-feed-for-google-shopping'); ?></span>
-                    </p>
-                    <ul>
-                        <li><?php esc_html_e('Age Group, Gender, Color, Size fields', 'gtin-product-feed-for-google-shopping'); ?></li>
-                        <li><?php esc_html_e('Google Product Category mapping', 'gtin-product-feed-for-google-shopping'); ?></li>
-                        <li><?php esc_html_e('Custom Labels for campaigns', 'gtin-product-feed-for-google-shopping'); ?></li>
-                        <li><?php esc_html_e('Scheduled auto-updates', 'gtin-product-feed-for-google-shopping'); ?></li>
-                        <li><?php esc_html_e('Facebook, Pinterest, TikTok, Snapchat feeds', 'gtin-product-feed-for-google-shopping'); ?></li>
-                    </ul>
-                    <a href="<?php echo esc_url($pro['url']); ?>" class="button button-primary gswc-pro-btn" target="_blank">
-                        <?php
-                        printf(
-                            /* translators: %s: price */
-                            esc_html__('Get Pro - %s/year', 'gtin-product-feed-for-google-shopping'),
-                            esc_html('$' . $pro['price'])
-                        );
-                        ?>
-                    </a>
-                </div>
-            </div>
         </div>
         <?php
     }
@@ -232,135 +181,6 @@ class GSWC_Product_Fields {
                 font-size: 12px;
                 color: #757575;
                 font-style: italic;
-            }
-
-            /* Pro upsell panel */
-            .gswc-pro-upsell-panel {
-                padding: 16px;
-                border-top: 1px solid #e0e0e0;
-                margin-top: 12px;
-                background: #f9fafb;
-            }
-
-            /* Pro card */
-            .gswc-pro-card {
-                background: #fff;
-                border: 1px solid #e0e0e0;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-            }
-
-            /* Panel promo banner (top of panel) */
-            .gswc-panel-promo {
-                display: flex;
-                align-items: center;
-                flex-wrap: wrap;
-                gap: 10px;
-                padding: 12px 16px;
-                font-size: 13px;
-                margin: 0;
-            }
-
-            .gswc-panel-promo.gswc-promo-highlight {
-                background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-                border-bottom: 1px solid #3b82f6;
-            }
-
-            .gswc-panel-promo.gswc-promo-urgent {
-                background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-                border-bottom: 1px solid #ef4444;
-            }
-
-            .gswc-panel-promo.gswc-promo-subtle {
-                background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-                border-bottom: 1px solid #9ca3af;
-            }
-
-            .gswc-promo-badge {
-                background: #3b82f6;
-                color: #fff;
-                padding: 3px 8px;
-                border-radius: 4px;
-                font-size: 11px;
-                font-weight: 600;
-                text-transform: uppercase;
-            }
-
-            .gswc-promo-urgent .gswc-promo-badge {
-                background: #ef4444;
-            }
-
-            .gswc-promo-text {
-                color: #1f2937;
-                font-weight: 500;
-            }
-
-            .gswc-promo-code {
-                background: rgba(255,255,255,0.7);
-                padding: 3px 8px;
-                border-radius: 4px;
-                font-weight: 600;
-            }
-
-            .gswc-promo-link {
-                margin-left: auto;
-                color: #1e40af;
-                font-weight: 600;
-                text-decoration: none;
-            }
-
-            .gswc-promo-link:hover {
-                text-decoration: underline;
-            }
-
-            .gswc-promo-urgent .gswc-promo-link {
-                color: #991b1b;
-            }
-
-            /* Pro features */
-            .gswc-pro-features {
-                padding: 16px;
-            }
-
-            .gswc-pro-title {
-                margin: 0 0 12px 0;
-                font-size: 14px;
-                color: #1e1e1e;
-            }
-
-            .gswc-pro-features ul {
-                margin: 0 0 16px 0;
-                padding: 0;
-                list-style: none;
-            }
-
-            .gswc-pro-features li {
-                position: relative;
-                padding-left: 20px;
-                margin-bottom: 6px;
-                font-size: 13px;
-                color: #374151;
-            }
-
-            .gswc-pro-features li::before {
-                content: "✓";
-                position: absolute;
-                left: 0;
-                color: #16a34a;
-                font-weight: 600;
-            }
-
-            .gswc-pro-btn {
-                background: linear-gradient(135deg, #4285f4, #34a853) !important;
-                border: none !important;
-                color: #fff !important;
-                padding: 8px 16px !important;
-                font-weight: 600 !important;
-            }
-
-            .gswc-pro-btn:hover {
-                opacity: 0.9;
             }
         </style>
         <?php

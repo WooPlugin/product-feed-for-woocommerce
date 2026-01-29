@@ -16,10 +16,14 @@ class GSWC_Admin {
      * Initialize admin
      */
     public static function init() {
-        add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_scripts']);
+        // Test with very high priority to ensure it runs
+        add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_scripts'], 999);
         add_action('admin_menu', [__CLASS__, 'add_menu']);
         add_filter('woocommerce_screen_ids', [__CLASS__, 'add_screen_ids']);
         add_action('wp_dashboard_setup', [__CLASS__, 'add_dashboard_widget']);
+
+        // Debug: Test if class is being loaded
+        error_log('GSWC: Class initialized, hook added');
     }
 
     /**
@@ -28,16 +32,22 @@ class GSWC_Admin {
      * @param string $hook Current admin page hook.
      */
     public static function enqueue_scripts($hook) {
-        $screen = get_current_screen();
-
-        // Load on WooCommerce settings page (our tab), product pages, dashboard, and our dashboard
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        $is_our_settings = $hook === 'woocommerce_page_wc-settings' && isset($_GET['tab']) && $_GET['tab'] === 'gswc_feed';
-        $is_product_page = $screen && ($screen->post_type === 'product' || $screen->id === 'product');
-        $is_our_dashboard = $hook === 'woocommerce_page_gswc-dashboard';
-        $is_wp_dashboard = $hook === 'index.php'; // Main WordPress dashboard
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
 
-        if (!$is_our_settings && !$is_product_page && !$is_our_dashboard && !$is_wp_dashboard) {
+        // Check by hook prefix OR page parameter
+        $is_our_page_by_hook = strpos($hook, 'gtin-product-feed_page_') === 0 || $hook === 'toplevel_page_gswc-dashboard';
+        $our_pages = ['gswc-dashboard', 'gswc-general', 'gswc-customize', 'gswc-feeds', 'gswc-filters'];
+        $is_our_page_by_param = in_array($page, $our_pages, true);
+        $is_our_page = $is_our_page_by_hook || $is_our_page_by_param;
+
+        // Also load on product pages and WooCommerce pages
+        $screen = get_current_screen();
+        $is_product_page = $screen && ($screen->post_type === 'product' || $screen->id === 'product');
+        $is_wp_dashboard = $hook === 'index.php';
+        $is_woocommerce_page = $screen && strpos($screen->id, 'woocommerce') !== false;
+
+        if (!$is_our_page && !$is_product_page && !$is_wp_dashboard && !$is_woocommerce_page) {
             return;
         }
 
@@ -68,17 +78,48 @@ class GSWC_Admin {
     }
 
     /**
-     * Add admin menu for dashboard
+     * Add admin menu
      */
     public static function add_menu() {
+        // Top-level menu
+        add_menu_page(
+            __('GTIN Product Feed', 'gtin-product-feed-for-google-shopping'),
+            __('GTIN Product Feed', 'gtin-product-feed-for-google-shopping'),
+            'manage_woocommerce',
+            'gswc-dashboard',
+            [__CLASS__, 'render_dashboard'],
+            'dashicons-rss',
+            56
+        );
+
+        // Dashboard submenu (default)
         add_submenu_page(
-            'woocommerce',
-            __('Google Shopping', 'gtin-product-feed-for-google-shopping'),
-            __('Google Shopping', 'gtin-product-feed-for-google-shopping'),
+            'gswc-dashboard',
+            __('Dashboard', 'gtin-product-feed-for-google-shopping'),
+            __('Dashboard', 'gtin-product-feed-for-google-shopping'),
             'manage_woocommerce',
             'gswc-dashboard',
             [__CLASS__, 'render_dashboard']
         );
+
+        // Settings section submenus
+        $sections = [
+            'gswc-general'    => __('General', 'gtin-product-feed-for-google-shopping'),
+            'gswc-customize' => __('Customization', 'gtin-product-feed-for-google-shopping'),
+            'gswc-feeds'      => __('Feeds', 'gtin-product-feed-for-google-shopping'),
+            'gswc-filters'    => __('Filters', 'gtin-product-feed-for-google-shopping'),
+        ];
+
+        foreach ($sections as $slug => $title) {
+            add_submenu_page(
+                'gswc-dashboard',
+                $title,
+                $title,
+                'manage_woocommerce',
+                $slug,
+                [__CLASS__, 'render_settings_page']
+            );
+        }
     }
 
     /**
@@ -88,8 +129,37 @@ class GSWC_Admin {
      * @return array
      */
     public static function add_screen_ids($screen_ids) {
-        $screen_ids[] = 'woocommerce_page_gswc-dashboard';
+        $screen_ids[] = 'toplevel_page_gswc-dashboard';
+        $screen_ids[] = 'gtin-product-feed_page_gswc-general';
+        $screen_ids[] = 'gtin-product-feed_page_gswc-feeds';
+        $screen_ids[] = 'gtin-product-feed_page_gswc-filters';
+        $screen_ids[] = 'gtin-product-feed_page_gswc-customize';
         return $screen_ids;
+    }
+
+    /**
+     * Render settings page
+     */
+    public static function render_settings_page() {
+        // Get current page slug
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : 'gswc-general';
+
+        // Map page slug to section ID
+        $section_map = [
+            'gswc-general'    => '',
+            'gswc-feeds'      => 'feeds',
+            'gswc-filters'    => 'filters',
+            'gswc-customize' => 'customize',
+        ];
+
+        $current_section = $section_map[$page] ?? '';
+
+        ?>
+        <div class="wrap">
+            <h1><?php esc_html_e('GTIN Product Feed Settings', 'gtin-product-feed-for-google-shopping'); ?></h1>
+            <?php GSWC_Settings::output_settings_page($current_section); ?>
+        </div>
+        <?php
     }
 
     /**
@@ -167,8 +237,6 @@ class GSWC_Admin {
         $feed_exists = file_exists($feed_file);
         $last_generated = get_option('gswc_feed_last_generated', 0);
         $product_count = get_option('gswc_feed_product_count', 0);
-        $promotion = GSWC_Remote_Data::get_promotion();
-        $pro = GSWC_Remote_Data::get_pro_pricing();
 
         // Count products modified since last feed generation
         $products_changed = 0;
@@ -187,16 +255,6 @@ class GSWC_Admin {
 
         ?>
         <div class="gswc-widget">
-            <?php if ($promotion) : ?>
-                <div class="gswc-widget-promo gswc-widget-promo-<?php echo esc_attr($promotion['style'] ?? 'highlight'); ?>">
-                    <strong><?php echo esc_html($promotion['title'] ?? __('Special Offer', 'gtin-product-feed-for-google-shopping')); ?></strong>
-                    <span><?php echo esc_html($promotion['message']); ?></span>
-                    <?php if (!empty($promotion['code'])) : ?>
-                        <code><?php echo esc_html($promotion['code']); ?></code>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-
             <div class="gswc-widget-stats">
                 <div class="gswc-widget-stat">
                     <span class="gswc-widget-stat-value"><?php echo esc_html($product_count ?: '—'); ?></span>
@@ -239,9 +297,6 @@ class GSWC_Admin {
                         );
                         ?>
                     </span>
-                    <a href="<?php echo esc_url($pro['url']); ?>" target="_blank" class="gswc-widget-stale-link">
-                        <?php esc_html_e('Auto-update with Pro', 'gtin-product-feed-for-google-shopping'); ?>
-                    </a>
                 </div>
             <?php endif; ?>
 
@@ -261,216 +316,11 @@ class GSWC_Admin {
                 <span id="gswc-widget-spinner" class="spinner"></span>
                 <span id="gswc-widget-result"></span>
 
-                <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=gswc_feed')); ?>" class="gswc-widget-settings">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=gswc-general')); ?>" class="gswc-widget-settings">
                     <?php esc_html_e('Settings', 'gtin-product-feed-for-google-shopping'); ?> →
                 </a>
             </div>
-
-            <div class="gswc-widget-upsell">
-                <p>
-                    <strong><?php esc_html_e('Need automation?', 'gtin-product-feed-for-google-shopping'); ?></strong>
-                    <?php esc_html_e('Pro auto-updates your feed + adds Facebook, Pinterest, TikTok, Snapchat.', 'gtin-product-feed-for-google-shopping'); ?>
-                </p>
-                <a href="<?php echo esc_url($pro['url']); ?>" target="_blank" class="gswc-widget-pro-link">
-                    <?php
-                    printf(
-                        /* translators: %s: price */
-                        esc_html__('Get Pro - %s', 'gtin-product-feed-for-google-shopping'),
-                        esc_html($pro['display'])
-                    );
-                    ?>
-                </a>
-            </div>
         </div>
-
-        <style>
-            .gswc-widget {
-                margin: -12px;
-            }
-
-            .gswc-widget-promo {
-                padding: 12px;
-                margin-bottom: 0;
-                border-bottom: 1px solid #e0e0e0;
-                font-size: 13px;
-            }
-
-            .gswc-widget-promo strong {
-                display: block;
-                margin-bottom: 4px;
-            }
-
-            .gswc-widget-promo code {
-                display: inline-block;
-                margin-top: 6px;
-                padding: 2px 8px;
-                background: #fff;
-                border-radius: 3px;
-                font-weight: 600;
-            }
-
-            .gswc-widget-promo-highlight {
-                background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-            }
-
-            .gswc-widget-promo-urgent {
-                background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-            }
-
-            .gswc-widget-promo-subtle {
-                background: #fef9c3;
-            }
-
-            .gswc-widget-stats {
-                display: flex;
-                border-bottom: 1px solid #e0e0e0;
-            }
-
-            .gswc-widget-stat {
-                flex: 1;
-                text-align: center;
-                padding: 16px 8px;
-                border-right: 1px solid #e0e0e0;
-            }
-
-            .gswc-widget-stat:last-child {
-                border-right: none;
-            }
-
-            .gswc-widget-stat-value {
-                display: block;
-                font-size: 24px;
-                font-weight: 600;
-                color: #1e1e1e;
-                line-height: 1.2;
-            }
-
-            .gswc-widget-stat-value.status-ok {
-                color: #16a34a;
-            }
-
-            .gswc-widget-stat-value.status-none {
-                color: #9ca3af;
-            }
-
-            .gswc-widget-stat-time {
-                font-size: 16px;
-            }
-
-            .gswc-widget-stale {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                padding: 10px 12px;
-                background: #fef3c7;
-                border-bottom: 1px solid #e0e0e0;
-                font-size: 12px;
-            }
-
-            .gswc-widget-stale-icon {
-                flex-shrink: 0;
-            }
-
-            .gswc-widget-stale-text {
-                flex: 1;
-                color: #92400e;
-            }
-
-            .gswc-widget-stale-link {
-                flex-shrink: 0;
-                color: #4285f4;
-                text-decoration: none;
-                font-weight: 500;
-            }
-
-            .gswc-widget-stale-link:hover {
-                text-decoration: underline;
-            }
-
-            .gswc-widget-stat-label {
-                display: block;
-                font-size: 11px;
-                color: #6b7280;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin-top: 4px;
-            }
-
-            .gswc-widget-url {
-                display: flex;
-                padding: 12px;
-                gap: 8px;
-                border-bottom: 1px solid #e0e0e0;
-            }
-
-            .gswc-widget-url input {
-                flex: 1;
-                font-size: 12px;
-                padding: 4px 8px;
-            }
-
-            .gswc-widget-actions {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                padding: 12px;
-                border-bottom: 1px solid #e0e0e0;
-            }
-
-            .gswc-widget-actions .spinner {
-                float: none;
-                margin: 0;
-            }
-
-            .gswc-widget-settings {
-                margin-left: auto;
-                text-decoration: none;
-                font-size: 13px;
-            }
-
-            #gswc-widget-result {
-                font-size: 13px;
-            }
-
-            #gswc-widget-result.success {
-                color: #16a34a;
-            }
-
-            #gswc-widget-result.error {
-                color: #dc2626;
-            }
-
-            .gswc-widget-upsell {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                padding: 12px;
-                background: linear-gradient(135deg, #f0f6ff 0%, #e8f5e9 100%);
-                font-size: 13px;
-            }
-
-            .gswc-widget-upsell p {
-                flex: 1;
-                margin: 0;
-            }
-
-            .gswc-widget-pro-link {
-                flex-shrink: 0;
-                display: inline-block;
-                padding: 6px 12px;
-                background: linear-gradient(135deg, #4285f4, #34a853);
-                color: #fff;
-                text-decoration: none;
-                border-radius: 4px;
-                font-weight: 600;
-                font-size: 12px;
-            }
-
-            .gswc-widget-pro-link:hover {
-                color: #fff;
-                opacity: 0.9;
-            }
-        </style>
         <?php
     }
 }

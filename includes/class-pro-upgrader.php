@@ -66,7 +66,7 @@ class GSWC_Pro_Upgrader {
 
         // Only show on our dashboard page
         $screen = get_current_screen();
-        if (!$screen || $screen->id !== 'woocommerce_page_gswc-dashboard') {
+        if (!$screen || $screen->id !== 'toplevel_page_gswc-dashboard') {
             return;
         }
 
@@ -257,7 +257,12 @@ class GSWC_Pro_Upgrader {
                     </button>
                 </div>
 
-                <div id="gswc-upgrade-status" class="gswc-upgrade-status"></div>
+                <div id="gswc-upgrade-status" class="gswc-upgrade-status"
+                     data-nonce="<?php echo esc_attr($nonce); ?>"
+                     data-enter-key="<?php echo esc_attr__('Please enter a license key.', 'gtin-product-feed-for-google-shopping'); ?>"
+                     data-validating="<?php echo esc_attr__('Validating license...', 'gtin-product-feed-for-google-shopping'); ?>"
+                     data-installing="<?php echo esc_attr__('Installing Pro...', 'gtin-product-feed-for-google-shopping'); ?>">
+                </div>
 
                 <p class="gswc-upgrade-help">
                     <?php esc_html_e("Don't have a license?", 'gtin-product-feed-for-google-shopping'); ?>
@@ -267,135 +272,6 @@ class GSWC_Pro_Upgrader {
                 </p>
             <?php endif; ?>
         </div>
-
-        <script>
-        (function() {
-            var validateBtn = document.getElementById('gswc-validate-license');
-            var licenseInput = document.getElementById('gswc-license-key');
-            var status = document.getElementById('gswc-upgrade-status');
-
-            if (!validateBtn) return;
-
-            validateBtn.addEventListener('click', function() {
-                var licenseKey = licenseInput.value.trim();
-                if (!licenseKey) {
-                    showStatus('error', '<?php echo esc_js(__('Please enter a license key.', 'gtin-product-feed-for-google-shopping')); ?>');
-                    return;
-                }
-
-                showStatus('loading', '<?php echo esc_js(__('Validating license...', 'gtin-product-feed-for-google-shopping')); ?>');
-                validateBtn.disabled = true;
-
-                // Step 1: Validate license
-                fetch(ajaxurl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        action: 'gswc_validate_license',
-                        nonce: '<?php echo esc_js($nonce); ?>',
-                        license_key: licenseKey
-                    })
-                })
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    if (!data.success) {
-                        throw new Error(data.data.message);
-                    }
-
-                    showStatus('loading', '<?php echo esc_js(__('Installing Pro...', 'gtin-product-feed-for-google-shopping')); ?>');
-
-                    // Step 2: Install Pro
-                    return fetch(ajaxurl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({
-                            action: 'gswc_install_pro',
-                            nonce: '<?php echo esc_js($nonce); ?>',
-                            download_url: data.data.download_url
-                        })
-                    });
-                })
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    if (!data.success) {
-                        throw new Error(data.data.message);
-                    }
-
-                    showStatus('success', data.data.message);
-
-                    if (data.data.redirect_to) {
-                        setTimeout(function() {
-                            window.location.href = data.data.redirect_to;
-                        }, 1500);
-                    }
-                })
-                .catch(function(error) {
-                    showStatus('error', error.message);
-                    validateBtn.disabled = false;
-                });
-            });
-
-            function showStatus(type, message) {
-                status.className = 'gswc-upgrade-status ' + type;
-                if (type === 'loading') {
-                    status.innerHTML = '<span class="spinner is-active"></span> ' + message;
-                } else {
-                    status.textContent = message;
-                }
-            }
-        })();
-        </script>
-
-        <style>
-            .gswc-upgrade-card {
-                background: linear-gradient(135deg, #f0f6ff 0%, #e8f5e9 100%);
-                border: 2px solid #4285f4;
-            }
-            .gswc-license-form {
-                display: flex;
-                gap: 10px;
-                margin: 16px 0;
-            }
-            .gswc-license-input {
-                flex: 1;
-                padding: 8px 12px;
-                font-size: 14px;
-            }
-            .gswc-upgrade-status {
-                margin: 12px 0;
-                padding: 10px;
-                border-radius: 4px;
-                display: none;
-            }
-            .gswc-upgrade-status.loading,
-            .gswc-upgrade-status.success,
-            .gswc-upgrade-status.error {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            .gswc-upgrade-status.loading {
-                background: #e0f2fe;
-                color: #075985;
-            }
-            .gswc-upgrade-status.success {
-                background: #dcfce7;
-                color: #166534;
-            }
-            .gswc-upgrade-status.error {
-                background: #fee2e2;
-                color: #991b1b;
-            }
-            .gswc-upgrade-status .spinner {
-                float: none;
-                margin: 0;
-            }
-            .gswc-upgrade-help {
-                font-size: 13px;
-                color: #6b7280;
-                margin: 0;
-            }
-        </style>
         <?php
     }
 }

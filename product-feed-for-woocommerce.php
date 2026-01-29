@@ -30,7 +30,6 @@ define('GSWC_VERSION', '1.0.2');
 define('GSWC_PLUGIN_FILE', __FILE__);
 define('GSWC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('GSWC_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('GSWC_PRO_URL', 'https://wooplugin.pro/google-shopping-pro');
 
 // GitHub update checker
 if (class_exists(YahnisElsts\PluginUpdateChecker\v5\PucFactory::class)) {
@@ -81,13 +80,11 @@ function gswc_init() {
     }
 
     // Include required files
-    require_once GSWC_PLUGIN_DIR . 'includes/class-remote-data.php';
     require_once GSWC_PLUGIN_DIR . 'includes/class-settings.php';
     require_once GSWC_PLUGIN_DIR . 'includes/class-product-fields.php';
     require_once GSWC_PLUGIN_DIR . 'includes/class-feed-generator.php';
     require_once GSWC_PLUGIN_DIR . 'includes/class-admin.php';
     require_once GSWC_PLUGIN_DIR . 'includes/class-review-notice.php';
-    require_once GSWC_PLUGIN_DIR . 'includes/class-pro-upgrader.php';
 
     // Initialize components
     GSWC_Settings::init();
@@ -95,7 +92,6 @@ function gswc_init() {
     GSWC_Feed_Generator::init();
     GSWC_Admin::init();
     GSWC_Review_Notice::init();
-    GSWC_Pro_Upgrader::init();
 }
 add_action('plugins_loaded', 'gswc_init');
 
@@ -132,15 +128,12 @@ function gswc_deactivate() {
 register_deactivation_hook(__FILE__, 'gswc_deactivate');
 
 /**
- * Add settings and upgrade links to plugins page
+ * Add settings link to plugins page
  */
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
-    $settings_link = '<a href="' . admin_url('admin.php?page=wc-settings&tab=gswc_feed') . '">' .
+    $settings_link = '<a href="' . admin_url('admin.php?page=gswc-general') . '">' .
         esc_html__('Settings', 'gtin-product-feed-for-google-shopping') . '</a>';
     array_unshift($links, $settings_link);
-
-    $links[] = '<a href="' . esc_url(GSWC_PRO_URL) . '" style="color: #4285f4; font-weight: bold;">' .
-        esc_html__('Upgrade to Pro', 'gtin-product-feed-for-google-shopping') . '</a>';
 
     return $links;
 });

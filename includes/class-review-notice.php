@@ -109,66 +109,6 @@ class GSWC_Review_Notice {
                 </button>
             </p>
         </div>
-        <style>
-            .gswc-review-notice {
-                padding: 12px 12px 12px 16px;
-            }
-            .gswc-review-notice p {
-                margin: 0 0 10px;
-            }
-            .gswc-review-notice p:last-child {
-                margin-bottom: 0;
-            }
-            .gswc-review-actions {
-                display: flex;
-                gap: 8px;
-                flex-wrap: wrap;
-            }
-            .gswc-review-actions .button-primary {
-                background: #4285f4;
-                border-color: #4285f4;
-            }
-            .gswc-review-actions .button-primary:hover {
-                background: #3367d6;
-                border-color: #3367d6;
-            }
-        </style>
-        <script>
-        (function() {
-            var notice = document.querySelector('.gswc-review-notice');
-            if (!notice) return;
-
-            var nonce = notice.dataset.nonce;
-            var ajaxUrl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
-
-            function dismiss(action) {
-                var formData = new FormData();
-                formData.append('action', 'gswc_dismiss_review');
-                formData.append('dismiss_action', action);
-                formData.append('nonce', nonce);
-
-                fetch(ajaxUrl, {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    body: formData
-                });
-
-                notice.style.display = 'none';
-            }
-
-            // Handle button clicks
-            notice.querySelectorAll('.gswc-review-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    dismiss(btn.dataset.action);
-                });
-            });
-
-            // Handle default dismiss (X button) - treat as "later"
-            notice.querySelector('.notice-dismiss')?.addEventListener('click', function() {
-                dismiss('later');
-            });
-        })();
-        </script>
         <?php
     }
 
