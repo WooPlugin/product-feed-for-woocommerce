@@ -67,9 +67,15 @@ class GSWC_Settings {
         }
 
         ?>
-        <div class="gswc-settings-wrapper">
-            <div class="gswc-settings-main">
-                <div class="gswc-content-card">
+        <div class="gswc-dashboard">
+            <h1 class="gswc-header">
+                <span class="gswc-logo">GTIN Product Feed</span>
+                <?php esc_html_e('for Google Shopping', 'gtin-product-feed-for-google-shopping'); ?>
+            </h1>
+
+            <div class="gswc-settings-wrapper">
+                <div class="gswc-settings-main">
+                    <div class="gswc-content-card">
                     <?php if ($page === 'gswc-feeds') : ?>
                         <?php self::render_feeds_page_content(); ?>
                     <?php else : ?>
@@ -94,6 +100,7 @@ class GSWC_Settings {
                             </div>
                         </form>
                     <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
