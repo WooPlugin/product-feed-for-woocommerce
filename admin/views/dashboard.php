@@ -255,22 +255,4 @@ $gswc_file_size = $gswc_feed_exists ? size_format(filesize($gswc_feed_file), 1) 
         </div>
     </div>
 
-    <!-- Footer -->
-    <p class="gswc-footer">
-        <?php
-        printf(
-            /* translators: %s: plugin version */
-            esc_html__('Google Shopping for WooCommerce %s', 'gtin-product-feed-for-google-shopping'),
-            esc_html(GSWC_VERSION)
-        );
-        ?>
-        <span aria-hidden="true">|</span>
-        <a href="https://woocommerce.com/documentation/google-product-feed-for-woocommerce/" target="_blank"><?php esc_html_e('Documentation', 'gtin-product-feed-for-google-shopping'); ?></a>
-        <span aria-hidden="true">|</span>
-        <a href="https://wordpress.org/support/plugin/gtin-product-feed-for-google-shopping/" target="_blank"><?php esc_html_e('Support', 'gtin-product-feed-for-google-shopping'); ?></a>
-        <span aria-hidden="true">|</span>
-        <a href="https://wordpress.org/support/plugin/gtin-product-feed-for-google-shopping/reviews/#new-post" target="_blank"><?php esc_html_e('Review Plugin ★★★★★', 'gtin-product-feed-for-google-shopping'); ?></a>
-        <span aria-hidden="true">|</span>
-        <a href="https://wooplugin.pro/google-shopping-pro#pricing" target="_blank" style="color: #7f54b3;"><?php esc_html_e('Upgrade to Pro', 'gtin-product-feed-for-google-shopping'); ?></a>
-    </p>
 </div>

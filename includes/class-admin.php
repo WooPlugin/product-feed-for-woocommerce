@@ -62,6 +62,11 @@ class GSWC_Admin {
             GSWC_VERSION
         );
 
+        // Enqueue WooCommerce Select2 for multiselect dropdowns on our pages
+        if ($is_our_page) {
+            wp_enqueue_script('wc-enhanced-select');
+        }
+
         wp_enqueue_script(
             'gswc-admin',
             GSWC_PLUGIN_URL . 'admin/js/admin.js',
@@ -199,9 +204,11 @@ class GSWC_Admin {
         <div class="gswc-plugin-header">
             <div class="gswc-plugin-header-left">
                 <span class="gswc-plugin-header-logo">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z" fill="#4285f4"/>
-                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="#34a853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="256" height="256" rx="32" fill="#7f54b3"/>
+                        <g transform="translate(68, 68) scale(5)" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                            <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+                        </g>
                     </svg>
                 </span>
                 <span class="gswc-plugin-header-name">WooPlugin</span>
@@ -219,19 +226,19 @@ class GSWC_Admin {
                     <div class="gswc-help-dropdown-menu">
                         <div class="gswc-help-section">
                             <h4><?php esc_html_e('Helpful Articles', 'gtin-product-feed-for-google-shopping'); ?></h4>
-                            <a href="https://wooplugin.pro/docs/getting-started" target="_blank">
+                            <a href="https://wooplugin.pro/docs/getting-started/installation" target="_blank">
                                 <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
                                 <?php esc_html_e('Getting Started Guide', 'gtin-product-feed-for-google-shopping'); ?>
                             </a>
-                            <a href="https://wooplugin.pro/docs/google-merchant-center" target="_blank">
+                            <a href="https://wooplugin.pro/docs/feeds/google-shopping" target="_blank">
                                 <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
                                 <?php esc_html_e('Connect to Google Merchant Center', 'gtin-product-feed-for-google-shopping'); ?>
                             </a>
-                            <a href="https://wooplugin.pro/docs/adding-gtin-brand-mpn" target="_blank">
+                            <a href="https://wooplugin.pro/docs/features/product-fields" target="_blank">
                                 <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
                                 <?php esc_html_e('Adding GTIN, Brand, MPN', 'gtin-product-feed-for-google-shopping'); ?>
                             </a>
-                            <a href="https://wooplugin.pro/docs/troubleshooting" target="_blank">
+                            <a href="https://wooplugin.pro/docs/troubleshooting/faq" target="_blank">
                                 <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
                                 <?php esc_html_e('Troubleshooting Feed Issues', 'gtin-product-feed-for-google-shopping'); ?>
                             </a>

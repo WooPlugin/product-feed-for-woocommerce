@@ -145,7 +145,7 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
             esc_html__('Settings', 'gtin-product-feed-for-google-shopping') . '</a>',
         'docs'     => '<a href="https://wooplugin.pro/docs" target="_blank">' .
             esc_html__('Docs', 'gtin-product-feed-for-google-shopping') . '</a>',
-        'support'  => '<a href="https://wooplugin.pro/support" target="_blank">' .
+        'support'  => '<a href="https://wordpress.org/support/plugin/gtin-product-feed-for-google-shopping/" target="_blank">' .
             esc_html__('Support', 'gtin-product-feed-for-google-shopping') . '</a>',
         'license'  => '<a href="' . admin_url('admin.php?page=gswc-license') . '">' .
             esc_html__('License', 'gtin-product-feed-for-google-shopping') . '</a>',

@@ -315,7 +315,7 @@ class GSWC_Settings {
                 case 'multiselect':
                     echo '<select name="' . esc_attr($id) . '[]" id="' . esc_attr($id) . '" multiple="multiple" class="wc-enhanced-select gswc-multiselect">';
                     foreach ($field['options'] as $opt_value => $opt_label) {
-                        $selected = is_array($value) && in_array($opt_value, $value, true) ? 'selected="selected"' : '';
+                        $selected = is_array($value) && in_array((string) $opt_value, $value, true) ? 'selected="selected"' : '';
                         echo '<option value="' . esc_attr($opt_value) . '" ' . $selected . '>' . esc_html($opt_label) . '</option>';
                     }
                     echo '</select>';
@@ -416,7 +416,7 @@ class GSWC_Settings {
                 case 'multiselect':
                     echo '<select name="' . esc_attr($id) . '[]" id="' . esc_attr($id) . '" multiple="multiple" class="wc-enhanced-select gswc-multiselect">';
                     foreach ($subfield['options'] ?? [] as $opt_value => $opt_label) {
-                        $selected = is_array($value) && in_array($opt_value, $value, true) ? 'selected="selected"' : '';
+                        $selected = is_array($value) && in_array((string) $opt_value, $value, true) ? 'selected="selected"' : '';
                         echo '<option value="' . esc_attr($opt_value) . '" ' . $selected . '>' . esc_html($opt_label) . '</option>';
                     }
                     echo '</select>';
