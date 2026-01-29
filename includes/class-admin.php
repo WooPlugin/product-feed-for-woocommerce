@@ -22,8 +22,13 @@ class GSWC_Admin {
         add_filter('woocommerce_screen_ids', [__CLASS__, 'add_screen_ids']);
         add_action('wp_dashboard_setup', [__CLASS__, 'add_dashboard_widget']);
 
-        // Debug: Test if class is being loaded
-        error_log('GSWC: Class initialized, hook added');
+        // Pro upsell
+        add_action('admin_notices', [__CLASS__, 'render_pro_banner']);
+        add_action('admin_notices', [__CLASS__, 'render_plugin_header']);
+        add_action('admin_notices', [__CLASS__, 'render_pro_notice']);
+        add_action('wp_ajax_gswc_dismiss_pro_notice', [__CLASS__, 'ajax_dismiss_pro_notice']);
+        add_action('admin_head', [__CLASS__, 'menu_badge_styles']);
+        add_action('admin_footer', [__CLASS__, 'upgrade_link_script']);
     }
 
     /**
@@ -37,7 +42,7 @@ class GSWC_Admin {
 
         // Check by hook prefix OR page parameter
         $is_our_page_by_hook = strpos($hook, 'gtin-product-feed_page_') === 0 || $hook === 'toplevel_page_gswc-dashboard';
-        $our_pages = ['gswc-dashboard', 'gswc-general', 'gswc-customize', 'gswc-feeds', 'gswc-filters'];
+        $our_pages = ['gswc-dashboard', 'gswc-general', 'gswc-customize', 'gswc-feeds', 'gswc-filters', 'gswc-license'];
         $is_our_page_by_param = in_array($page, $our_pages, true);
         $is_our_page = $is_our_page_by_hook || $is_our_page_by_param;
 
@@ -120,6 +125,366 @@ class GSWC_Admin {
                 [__CLASS__, 'render_settings_page']
             );
         }
+
+        // License submenu
+        add_submenu_page(
+            'gswc-dashboard',
+            __('License', 'gtin-product-feed-for-google-shopping'),
+            __('License', 'gtin-product-feed-for-google-shopping'),
+            'manage_woocommerce',
+            'gswc-license',
+            [__CLASS__, 'render_license_page']
+        );
+
+        // Upgrade to Pro external link (placeholder, will be modified via JS)
+        add_submenu_page(
+            'gswc-dashboard',
+            __('Upgrade to Pro', 'gtin-product-feed-for-google-shopping'),
+            __('Upgrade to Pro', 'gtin-product-feed-for-google-shopping') . ' <span class="gswc-menu-badge">Pro</span>',
+            'manage_woocommerce',
+            'gswc-upgrade-pro',
+            '__return_null'
+        );
+    }
+
+    /**
+     * Render persistent Pro banner on plugin pages
+     */
+    public static function render_pro_banner() {
+        // Only show on our plugin pages
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+        $our_pages = ['gswc-dashboard', 'gswc-general', 'gswc-customize', 'gswc-feeds', 'gswc-filters', 'gswc-license'];
+        if (!in_array($page, $our_pages, true)) {
+            return;
+        }
+
+        $upgrade_url = add_query_arg([
+            'utm_source'   => 'plugin',
+            'utm_medium'   => 'top-banner',
+            'utm_campaign' => 'free-to-pro',
+        ], 'https://wooplugin.pro/google-shopping-pro#pricing');
+        ?>
+        <div class="gswc-pro-banner">
+            <?php
+            printf(
+                /* translators: %s: upgrade link */
+                esc_html__("You're using GTIN Product Feed FREE VERSION. To unlock more features consider %s.", 'gtin-product-feed-for-google-shopping'),
+                '<a href="' . esc_url($upgrade_url) . '" target="_blank">' . esc_html__('upgrading to Pro', 'gtin-product-feed-for-google-shopping') . '</a>'
+            );
+            ?>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render plugin header bar on plugin pages
+     */
+    public static function render_plugin_header() {
+        // Only show on our plugin pages
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+        $our_pages = ['gswc-dashboard', 'gswc-general', 'gswc-customize', 'gswc-feeds', 'gswc-filters', 'gswc-license'];
+        if (!in_array($page, $our_pages, true)) {
+            return;
+        }
+
+        $upgrade_url = add_query_arg([
+            'utm_source'   => 'plugin',
+            'utm_medium'   => 'header',
+            'utm_campaign' => 'free-to-pro',
+        ], 'https://wooplugin.pro/google-shopping-pro#pricing');
+
+        $help_url = 'https://wooplugin.pro/docs';
+        ?>
+        <div class="gswc-plugin-header">
+            <div class="gswc-plugin-header-left">
+                <span class="gswc-plugin-header-logo">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" fill="#4285f4"/>
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="#34a853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <span class="gswc-plugin-header-name">WooPlugin</span>
+                <a href="<?php echo esc_url($upgrade_url); ?>" class="gswc-upgrade-btn" target="_blank">
+                    <?php esc_html_e('Upgrade to Pro', 'gtin-product-feed-for-google-shopping'); ?>
+                    <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                </a>
+            </div>
+            <div class="gswc-plugin-header-right">
+                <div class="gswc-help-dropdown">
+                    <button type="button" class="gswc-header-btn gswc-help-toggle">
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+                        <?php esc_html_e('Help', 'gtin-product-feed-for-google-shopping'); ?>
+                    </button>
+                    <div class="gswc-help-dropdown-menu">
+                        <div class="gswc-help-section">
+                            <h4><?php esc_html_e('Helpful Articles', 'gtin-product-feed-for-google-shopping'); ?></h4>
+                            <a href="https://wooplugin.pro/docs/getting-started" target="_blank">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+                                <?php esc_html_e('Getting Started Guide', 'gtin-product-feed-for-google-shopping'); ?>
+                            </a>
+                            <a href="https://wooplugin.pro/docs/google-merchant-center" target="_blank">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+                                <?php esc_html_e('Connect to Google Merchant Center', 'gtin-product-feed-for-google-shopping'); ?>
+                            </a>
+                            <a href="https://wooplugin.pro/docs/adding-gtin-brand-mpn" target="_blank">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+                                <?php esc_html_e('Adding GTIN, Brand, MPN', 'gtin-product-feed-for-google-shopping'); ?>
+                            </a>
+                            <a href="https://wooplugin.pro/docs/troubleshooting" target="_blank">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+                                <?php esc_html_e('Troubleshooting Feed Issues', 'gtin-product-feed-for-google-shopping'); ?>
+                            </a>
+                        </div>
+                        <div class="gswc-help-section">
+                            <h4><?php esc_html_e('Resources', 'gtin-product-feed-for-google-shopping'); ?></h4>
+                            <a href="https://wooplugin.pro/docs" target="_blank">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/></svg>
+                                <?php esc_html_e('Documentation', 'gtin-product-feed-for-google-shopping'); ?>
+                            </a>
+                            <a href="https://wooplugin.pro/support" target="_blank">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z" clip-rule="evenodd"/></svg>
+                                <?php esc_html_e('Support', 'gtin-product-feed-for-google-shopping'); ?>
+                            </a>
+                            <a href="https://wordpress.org/support/plugin/gtin-product-feed-for-google-shopping/reviews/#new-post" target="_blank">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <?php esc_html_e('Leave a Review', 'gtin-product-feed-for-google-shopping'); ?>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Output menu badge styles
+     */
+    public static function menu_badge_styles() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+        $our_pages = ['gswc-dashboard', 'gswc-general', 'gswc-customize', 'gswc-feeds', 'gswc-filters', 'gswc-license'];
+        $is_our_page = in_array($page, $our_pages, true);
+        ?>
+        <style>
+            .gswc-menu-badge {
+                background: #7c3aed;
+                color: #fff;
+                padding: 2px 6px;
+                border-radius: 3px;
+                font-size: 10px;
+                font-weight: 600;
+                margin-left: 4px;
+                vertical-align: middle;
+            }
+            <?php if ($is_our_page) : ?>
+            /* Hide WordPress help tab on our pages */
+            #contextual-help-link-wrap {
+                display: none !important;
+            }
+            <?php endif; ?>
+        </style>
+        <?php
+    }
+
+    /**
+     * Script to make Upgrade to Pro link open in new tab
+     */
+    public static function upgrade_link_script() {
+        $upgrade_url = add_query_arg([
+            'utm_source'   => 'plugin',
+            'utm_medium'   => 'menu',
+            'utm_campaign' => 'free-to-pro',
+        ], 'https://wooplugin.pro/google-shopping-pro#pricing');
+        ?>
+        <script>
+        (function() {
+            var link = document.querySelector('a[href*="page=gswc-upgrade-pro"]');
+            if (link) {
+                link.href = <?php echo wp_json_encode($upgrade_url); ?>;
+                link.target = '_blank';
+            }
+        })();
+        </script>
+        <?php
+    }
+
+    /**
+     * Render license page
+     */
+    public static function render_license_page() {
+        $upgrade_url = add_query_arg([
+            'utm_source'   => 'plugin',
+            'utm_medium'   => 'license-page',
+            'utm_campaign' => 'free-to-pro',
+        ], 'https://wooplugin.pro/google-shopping-pro#pricing');
+
+        $learn_more_url = add_query_arg([
+            'utm_source'   => 'plugin',
+            'utm_medium'   => 'license-page',
+            'utm_campaign' => 'free-to-pro',
+        ], 'https://wooplugin.pro/google-shopping-pro');
+        ?>
+        <div class="wrap gswc-license-wrap">
+            <h1 class="gswc-page-title"><?php esc_html_e('License', 'gtin-product-feed-for-google-shopping'); ?></h1>
+            <p class="gswc-page-subtitle"><?php esc_html_e('Enter your license key below to enjoy full access, plugin updates, and support.', 'gtin-product-feed-for-google-shopping'); ?></p>
+
+            <!-- Plugin Info Card -->
+            <div class="gswc-license-info-card">
+                <div class="gswc-license-info-row">
+                    <span class="gswc-license-info-label"><?php esc_html_e('GTIN Product Feed', 'gtin-product-feed-for-google-shopping'); ?></span>
+                </div>
+                <div class="gswc-license-info-row">
+                    <span class="gswc-license-info-label"><?php esc_html_e('Version:', 'gtin-product-feed-for-google-shopping'); ?></span>
+                    <span class="gswc-license-info-value"><?php echo esc_html(GSWC_VERSION); ?></span>
+                </div>
+                <div class="gswc-license-info-row">
+                    <span class="gswc-license-info-label"><?php esc_html_e('License Status:', 'gtin-product-feed-for-google-shopping'); ?></span>
+                    <span class="gswc-license-info-value gswc-license-free"><?php esc_html_e('Free Version', 'gtin-product-feed-for-google-shopping'); ?></span>
+                </div>
+            </div>
+
+            <!-- Upgrade to Pro Card -->
+            <div class="gswc-upgrade-card">
+                <h2><?php esc_html_e('Upgrade to Pro', 'gtin-product-feed-for-google-shopping'); ?></h2>
+                <p class="gswc-upgrade-description">
+                    <?php esc_html_e('The Pro version includes advanced features for power users: multiple feed channels, advanced filtering, category mapping, custom field support, priority support, and more.', 'gtin-product-feed-for-google-shopping'); ?>
+                </p>
+
+                <ul class="gswc-feature-list">
+                    <li>
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        <?php esc_html_e('Multiple feed channels (Facebook, Bing, Pinterest, etc.)', 'gtin-product-feed-for-google-shopping'); ?>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        <?php esc_html_e('Advanced product filtering and rules', 'gtin-product-feed-for-google-shopping'); ?>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        <?php esc_html_e('Google category mapping', 'gtin-product-feed-for-google-shopping'); ?>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        <?php esc_html_e('Custom field and attribute support', 'gtin-product-feed-for-google-shopping'); ?>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        <?php esc_html_e('Priority email support', 'gtin-product-feed-for-google-shopping'); ?>
+                    </li>
+                </ul>
+
+                <div class="gswc-upgrade-actions">
+                    <a href="<?php echo esc_url($upgrade_url); ?>" class="button button-primary button-hero gswc-upgrade-button" target="_blank">
+                        <?php esc_html_e('Get Pro & Unlock All Features', 'gtin-product-feed-for-google-shopping'); ?>
+                    </a>
+                    <a href="<?php echo esc_url($learn_more_url); ?>" class="gswc-learn-more-link" target="_blank">
+                        <?php esc_html_e('Learn more about Pro features', 'gtin-product-feed-for-google-shopping'); ?>
+                    </a>
+                </div>
+            </div>
+
+            <!-- License Key Card -->
+            <div class="gswc-license-key-card">
+                <h3><?php esc_html_e('Already have a license?', 'gtin-product-feed-for-google-shopping'); ?></h3>
+                <p><?php esc_html_e('Enter your license key to activate Pro features and automatic updates.', 'gtin-product-feed-for-google-shopping'); ?></p>
+                <div class="gswc-license-input-row">
+                    <input type="text" id="gswc-license-key" class="gswc-input-text" placeholder="<?php esc_attr_e('Enter your license key', 'gtin-product-feed-for-google-shopping'); ?>">
+                    <button type="button" id="gswc-activate-license" class="button button-primary">
+                        <?php esc_html_e('Activate License', 'gtin-product-feed-for-google-shopping'); ?>
+                    </button>
+                </div>
+                <p class="gswc-license-help">
+                    <?php
+                    printf(
+                        /* translators: %s: support email link */
+                        esc_html__('Lost your license key? %s', 'gtin-product-feed-for-google-shopping'),
+                        '<a href="mailto:support@wooplugin.pro">' . esc_html__('Contact support', 'gtin-product-feed-for-google-shopping') . '</a>'
+                    );
+                    ?>
+                </p>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render Pro upsell notice
+     */
+    public static function render_pro_notice() {
+        // Only show to users with manage_woocommerce capability
+        if (!current_user_can('manage_woocommerce')) {
+            return;
+        }
+
+        // Only show on plugin pages (exclude upgrade page itself)
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+        $notice_pages = ['gswc-dashboard', 'gswc-general', 'gswc-customize', 'gswc-feeds', 'gswc-filters'];
+        if (!in_array($page, $notice_pages, true)) {
+            return;
+        }
+
+        $user_id = get_current_user_id();
+
+        // Check if permanently dismissed
+        if (get_user_meta($user_id, 'gswc_pro_notice_dismissed', true)) {
+            return;
+        }
+
+        // Check if snoozed
+        $snoozed_until = get_user_meta($user_id, 'gswc_pro_notice_snoozed', true);
+        if ($snoozed_until && time() < (int) $snoozed_until) {
+            return;
+        }
+
+        $upgrade_url = add_query_arg([
+            'utm_source'   => 'plugin',
+            'utm_medium'   => 'notice',
+            'utm_campaign' => 'free-to-pro',
+        ], 'https://wooplugin.pro/google-shopping-pro#pricing');
+        ?>
+        <div class="notice notice-info is-dismissible gswc-pro-notice" data-nonce="<?php echo esc_attr(wp_create_nonce('gswc_dismiss_pro_notice')); ?>">
+            <p>
+                <strong><?php esc_html_e('Unlock More Features with Pro', 'gtin-product-feed-for-google-shopping'); ?></strong><br>
+                <?php esc_html_e('Get multiple feeds, advanced filtering, category mapping, and priority support.', 'gtin-product-feed-for-google-shopping'); ?>
+            </p>
+            <p class="gswc-pro-notice-actions">
+                <a href="<?php echo esc_url($upgrade_url); ?>" class="button button-primary" target="_blank">
+                    <?php esc_html_e('Learn More', 'gtin-product-feed-for-google-shopping'); ?>
+                </a>
+                <button type="button" class="button gswc-pro-notice-snooze">
+                    <?php esc_html_e('Maybe Later', 'gtin-product-feed-for-google-shopping'); ?>
+                </button>
+            </p>
+        </div>
+        <?php
+    }
+
+    /**
+     * AJAX handler for dismissing Pro notice
+     */
+    public static function ajax_dismiss_pro_notice() {
+        check_ajax_referer('gswc_dismiss_pro_notice', 'nonce');
+
+        if (!current_user_can('manage_woocommerce')) {
+            wp_send_json_error('Permission denied');
+        }
+
+        $user_id = get_current_user_id();
+        $action = isset($_POST['dismiss_action']) ? sanitize_text_field(wp_unslash($_POST['dismiss_action'])) : 'dismiss';
+
+        if ($action === 'snooze') {
+            // Snooze for 30 days
+            update_user_meta($user_id, 'gswc_pro_notice_snoozed', time() + (30 * DAY_IN_SECONDS));
+        } else {
+            // Permanent dismiss
+            update_user_meta($user_id, 'gswc_pro_notice_dismissed', '1');
+        }
+
+        wp_send_json_success();
     }
 
     /**
@@ -134,6 +499,7 @@ class GSWC_Admin {
         $screen_ids[] = 'gtin-product-feed_page_gswc-feeds';
         $screen_ids[] = 'gtin-product-feed_page_gswc-filters';
         $screen_ids[] = 'gtin-product-feed_page_gswc-customize';
+        $screen_ids[] = 'gtin-product-feed_page_gswc-license';
         return $screen_ids;
     }
 

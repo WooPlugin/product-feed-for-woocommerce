@@ -1615,3 +1615,450 @@
         justify-content: center;
     }
 }
+
+/* ==========================================================================
+   Pro Upsell Notice
+   ========================================================================== */
+
+.gswc-pro-notice {
+    border-left-color: #7c3aed;
+}
+
+.gswc-pro-notice p {
+    margin: 0.5em 0;
+}
+
+.gswc-pro-notice strong {
+    color: #1e1e1e;
+}
+
+.gswc-pro-notice-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.gswc-pro-notice-actions .button-primary {
+    background: #7c3aed;
+    border-color: #7c3aed;
+}
+
+.gswc-pro-notice-actions .button-primary:hover,
+.gswc-pro-notice-actions .button-primary:focus {
+    background: #6d28d9;
+    border-color: #6d28d9;
+}
+
+/* ==========================================================================
+   Pro Top Banner
+   ========================================================================== */
+
+.gswc-pro-banner {
+    background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+    border-bottom: 1px solid #ddd;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #444;
+    margin: -1px -20px 20px -20px;
+    box-sizing: border-box;
+}
+
+.gswc-pro-banner a {
+    color: #7c3aed;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.gswc-pro-banner a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   Plugin Header Bar
+   ========================================================================== */
+
+.gswc-plugin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 0 20px 20px 0;
+    box-sizing: border-box;
+}
+
+.gswc-plugin-header-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.gswc-plugin-header-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+}
+
+.gswc-plugin-header-logo svg {
+    width: 32px;
+    height: 32px;
+}
+
+.gswc-plugin-header-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #7c3aed;
+}
+
+.gswc-upgrade-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #dc2626;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.gswc-upgrade-btn:hover {
+    background: #b91c1c;
+    color: #fff;
+}
+
+.gswc-upgrade-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.gswc-plugin-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gswc-header-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    color: #374151;
+    padding: 8px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.gswc-header-btn:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.gswc-header-btn svg {
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+}
+
+/* Help Dropdown */
+.gswc-help-dropdown {
+    position: relative;
+}
+
+.gswc-help-toggle {
+    cursor: pointer;
+}
+
+.gswc-help-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    min-width: 260px;
+    max-width: calc(100vw - 40px);
+    z-index: 1000;
+    padding: 8px 0;
+}
+
+.gswc-help-dropdown.open .gswc-help-dropdown-menu {
+    display: block;
+}
+
+.gswc-help-section {
+    padding: 8px 0;
+}
+
+.gswc-help-section:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.gswc-help-section h4 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    margin: 0;
+    padding: 8px 16px;
+}
+
+.gswc-help-section a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 13px;
+    transition: background 0.15s;
+}
+
+.gswc-help-section a:hover {
+    background: #f9fafb;
+    color: #1f2937;
+}
+
+.gswc-help-section a svg {
+    width: 16px;
+    height: 16px;
+    color: #9ca3af;
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Menu Badge
+   ========================================================================== */
+
+.gswc-menu-badge {
+    background: #7c3aed;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+/* ==========================================================================
+   License / Upgrade Page
+   ========================================================================== */
+
+.gswc-license-wrap {
+    max-width: 100%;
+}
+
+.gswc-page-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin: -10px 0 20px 0;
+}
+
+/* Plugin Info Card */
+.gswc-license-info-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.gswc-license-info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+}
+
+.gswc-license-info-row:first-child {
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.gswc-license-info-row:first-child .gswc-license-info-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.gswc-license-info-label {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.gswc-license-info-value {
+    font-size: 14px;
+    color: #1e1e1e;
+}
+
+.gswc-license-free {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.gswc-license-active {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+/* Upgrade Card */
+.gswc-upgrade-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.gswc-upgrade-card h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e1e1e;
+    margin: 0 0 12px 0;
+    border: none;
+    padding: 0;
+}
+
+.gswc-upgrade-description {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+}
+
+.gswc-feature-list {
+    list-style: none;
+    margin: 0 0 24px 0;
+    padding: 0;
+}
+
+.gswc-feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 14px;
+    color: #374151;
+}
+
+.gswc-feature-list svg {
+    width: 20px;
+    height: 20px;
+    color: #16a34a;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.gswc-upgrade-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.gswc-upgrade-button {
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+    color: #fff !important;
+    font-size: 14px !important;
+    padding: 10px 24px !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+}
+
+.gswc-upgrade-button:hover,
+.gswc-upgrade-button:focus {
+    background: #b91c1c !important;
+    border-color: #b91c1c !important;
+}
+
+.gswc-learn-more-link {
+    font-size: 13px;
+    color: #6b7280;
+    text-decoration: none;
+}
+
+.gswc-learn-more-link:hover {
+    color: #4b5563;
+    text-decoration: underline;
+}
+
+/* License Key Card */
+.gswc-license-key-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.gswc-license-key-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e1e1e;
+    margin: 0 0 8px 0;
+}
+
+.gswc-license-key-card > p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 16px 0;
+}
+
+.gswc-license-input-row {
+    display: flex;
+    gap: 12px;
+    max-width: 600px;
+}
+
+.gswc-license-input-row .gswc-input-text {
+    flex: 1;
+}
+
+.gswc-license-help {
+    font-size: 13px;
+    color: #9ca3af;
+    margin: 12px 0 0 0;
+}
+
+.gswc-license-help a {
+    color: #6b7280;
+}
+
+.gswc-license-help a:hover {
+    color: #4b5563;
+}
+
+@media screen and (max-width: 600px) {
+    .gswc-upgrade-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gswc-license-input-row {
+        flex-direction: column;
+        max-width: 100%;
+    }
+}

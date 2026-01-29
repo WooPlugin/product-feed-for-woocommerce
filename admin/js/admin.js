@@ -19,6 +19,8 @@
         initWidgetCopy();
         initFeedToggle();
         initInlinePairPreview();
+        initProNotice();
+        initHelpDropdown();
     });
 
     /**
@@ -402,6 +404,88 @@
                 button.textContent = originalText;
             }, 2000);
         }
+    }
+
+    /**
+     * Initialize Help dropdown
+     */
+    function initHelpDropdown() {
+        var dropdown = document.querySelector('.gswc-help-dropdown');
+        if (!dropdown) {
+            return;
+        }
+
+        var toggle = dropdown.querySelector('.gswc-help-toggle');
+
+        toggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            dropdown.classList.toggle('open');
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                dropdown.classList.remove('open');
+            }
+        });
+    }
+
+    /**
+     * Initialize Pro notice dismissal
+     */
+    function initProNotice() {
+        var notice = document.querySelector('.gswc-pro-notice');
+        if (!notice) {
+            return;
+        }
+
+        var nonce = notice.dataset.nonce;
+        var snoozeBtn = notice.querySelector('.gswc-pro-notice-snooze');
+
+        // Handle snooze button
+        if (snoozeBtn) {
+            snoozeBtn.addEventListener('click', function () {
+                dismissProNotice(notice, nonce, 'snooze');
+            });
+        }
+
+        // Handle X button (permanent dismiss)
+        var dismissBtn = notice.querySelector('.notice-dismiss');
+        if (dismissBtn) {
+            dismissBtn.addEventListener('click', function () {
+                dismissProNotice(notice, nonce, 'dismiss');
+            });
+        }
+    }
+
+    /**
+     * Dismiss Pro notice via AJAX
+     *
+     * @param {HTMLElement} notice The notice element
+     * @param {string} nonce Security nonce
+     * @param {string} action 'dismiss' or 'snooze'
+     */
+    function dismissProNotice(notice, nonce, action) {
+        var formData = new FormData();
+        formData.append('action', 'gswc_dismiss_pro_notice');
+        formData.append('nonce', nonce);
+        formData.append('dismiss_action', action);
+
+        fetch(gswcFeed.ajaxUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData
+        }).then(function () {
+            // Hide the notice
+            notice.style.display = 'none';
+        });
     }
 
     /**

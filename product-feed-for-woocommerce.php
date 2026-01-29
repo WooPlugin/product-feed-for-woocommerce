@@ -128,12 +128,27 @@ function gswc_deactivate() {
 register_deactivation_hook(__FILE__, 'gswc_deactivate');
 
 /**
- * Add settings link to plugins page
+ * Add action links to plugins page
  */
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
-    $settings_link = '<a href="' . admin_url('admin.php?page=gswc-general') . '">' .
-        esc_html__('Settings', 'gtin-product-feed-for-google-shopping') . '</a>';
-    array_unshift($links, $settings_link);
+    $upgrade_url = add_query_arg([
+        'utm_source'   => 'plugin',
+        'utm_medium'   => 'plugins-page',
+        'utm_campaign' => 'free-to-pro',
+    ], 'https://wooplugin.pro/google-shopping-pro#pricing');
 
-    return $links;
+    $custom_links = [
+        'upgrade'  => '<a href="' . esc_url($upgrade_url) . '" target="_blank" style="color: #16a34a; font-weight: 600;">' .
+            esc_html__('Upgrade to Pro', 'gtin-product-feed-for-google-shopping') . '</a>',
+        'settings' => '<a href="' . admin_url('admin.php?page=gswc-general') . '">' .
+            esc_html__('Settings', 'gtin-product-feed-for-google-shopping') . '</a>',
+        'docs'     => '<a href="https://wooplugin.pro/docs" target="_blank">' .
+            esc_html__('Docs', 'gtin-product-feed-for-google-shopping') . '</a>',
+        'support'  => '<a href="https://wooplugin.pro/support" target="_blank">' .
+            esc_html__('Support', 'gtin-product-feed-for-google-shopping') . '</a>',
+        'license'  => '<a href="' . admin_url('admin.php?page=gswc-license') . '">' .
+            esc_html__('License', 'gtin-product-feed-for-google-shopping') . '</a>',
+    ];
+
+    return array_merge($custom_links, $links);
 });
