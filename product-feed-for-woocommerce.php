@@ -124,6 +124,7 @@ register_activation_hook(__FILE__, 'gswc_activate');
  */
 function gswc_deactivate() {
     wp_clear_scheduled_hook('gswc_generate_cron');
+    delete_option('gswc_dashboard_promo_dismissed');
 }
 register_deactivation_hook(__FILE__, 'gswc_deactivate');
 

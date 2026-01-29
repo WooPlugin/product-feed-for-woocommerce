@@ -25,8 +25,7 @@ class GSWC_Admin {
         // Pro upsell
         add_action('admin_notices', [__CLASS__, 'render_pro_banner']);
         add_action('admin_notices', [__CLASS__, 'render_plugin_header']);
-        add_action('admin_notices', [__CLASS__, 'render_pro_notice']);
-        add_action('wp_ajax_gswc_dismiss_pro_notice', [__CLASS__, 'ajax_dismiss_pro_notice']);
+        add_action('wp_ajax_gswc_dismiss_dashboard_promo', [__CLASS__, 'ajax_dismiss_dashboard_promo']);
         add_action('admin_head', [__CLASS__, 'menu_badge_styles']);
         add_action('admin_footer', [__CLASS__, 'upgrade_link_script']);
     }
@@ -346,33 +345,40 @@ class GSWC_Admin {
                 </div>
             </div>
 
+            <!-- Upgrade Cards Grid -->
+            <div class="gswc-license-grid">
+
             <!-- Upgrade to Pro Card -->
             <div class="gswc-upgrade-card">
                 <h2><?php esc_html_e('Upgrade to Pro', 'gtin-product-feed-for-google-shopping'); ?></h2>
                 <p class="gswc-upgrade-description">
-                    <?php esc_html_e('The Pro version includes advanced features for power users: multiple feed channels, advanced filtering, category mapping, custom field support, priority support, and more.', 'gtin-product-feed-for-google-shopping'); ?>
+                    <?php esc_html_e('The Pro version includes scheduled auto-updates, additional feed channels, smart auto-fill, category mapping, and priority support.', 'gtin-product-feed-for-google-shopping'); ?>
                 </p>
 
                 <ul class="gswc-feature-list">
                     <li>
                         <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                        <?php esc_html_e('Multiple feed channels (Facebook, Bing, Pinterest, etc.)', 'gtin-product-feed-for-google-shopping'); ?>
+                        <?php esc_html_e('Scheduled auto-updates - keep your feed always fresh', 'gtin-product-feed-for-google-shopping'); ?>
                     </li>
                     <li>
                         <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                        <?php esc_html_e('Advanced product filtering and rules', 'gtin-product-feed-for-google-shopping'); ?>
+                        <?php esc_html_e('Update on product save - feed updates automatically when you edit products', 'gtin-product-feed-for-google-shopping'); ?>
                     </li>
                     <li>
                         <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                        <?php esc_html_e('Google category mapping', 'gtin-product-feed-for-google-shopping'); ?>
+                        <?php esc_html_e('Facebook, Pinterest, TikTok, Bing, Snapchat feed channels', 'gtin-product-feed-for-google-shopping'); ?>
                     </li>
                     <li>
                         <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                        <?php esc_html_e('Custom field and attribute support', 'gtin-product-feed-for-google-shopping'); ?>
+                        <?php esc_html_e('Smart Auto-fill from product data', 'gtin-product-feed-for-google-shopping'); ?>
                     </li>
                     <li>
                         <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                        <?php esc_html_e('Priority email support', 'gtin-product-feed-for-google-shopping'); ?>
+                        <?php esc_html_e('Auto Category Mapping for Google product taxonomy', 'gtin-product-feed-for-google-shopping'); ?>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        <?php esc_html_e('1 year of updates & priority support', 'gtin-product-feed-for-google-shopping'); ?>
                     </li>
                 </ul>
 
@@ -386,26 +392,61 @@ class GSWC_Admin {
                 </div>
             </div>
 
-            <!-- License Key Card -->
-            <div class="gswc-license-key-card">
-                <h3><?php esc_html_e('Already have a license?', 'gtin-product-feed-for-google-shopping'); ?></h3>
-                <p><?php esc_html_e('Enter your license key to activate Pro features and automatic updates.', 'gtin-product-feed-for-google-shopping'); ?></p>
-                <div class="gswc-license-input-row">
-                    <input type="text" id="gswc-license-key" class="gswc-input-text" placeholder="<?php esc_attr_e('Enter your license key', 'gtin-product-feed-for-google-shopping'); ?>">
-                    <button type="button" id="gswc-activate-license" class="button button-primary">
-                        <?php esc_html_e('Activate License', 'gtin-product-feed-for-google-shopping'); ?>
-                    </button>
+            <!-- Screenshot Card -->
+            <div class="gswc-screenshot-card">
+                <h2><?php esc_html_e('Pro Dashboard', 'gtin-product-feed-for-google-shopping'); ?></h2>
+                <div class="gswc-screenshot-browser">
+                    <div class="gswc-screenshot-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="gswc-screenshot-content">
+                        <div class="gswc-screenshot-channels">
+                            <h4><?php esc_html_e('Feed Channels', 'gtin-product-feed-for-google-shopping'); ?></h4>
+                            <div class="gswc-screenshot-channel">
+                                <span class="gswc-screenshot-icon" style="color: #4285f4;">&#9679;</span>
+                                <span>Google Shopping</span>
+                                <span class="gswc-screenshot-badge gswc-screenshot-active"><?php esc_html_e('Active', 'gtin-product-feed-for-google-shopping'); ?></span>
+                            </div>
+                            <div class="gswc-screenshot-channel">
+                                <span class="gswc-screenshot-icon" style="color: #1877f2;">&#9679;</span>
+                                <span>Facebook & Instagram</span>
+                                <span class="gswc-screenshot-badge gswc-screenshot-active"><?php esc_html_e('Active', 'gtin-product-feed-for-google-shopping'); ?></span>
+                            </div>
+                            <div class="gswc-screenshot-channel">
+                                <span class="gswc-screenshot-icon" style="color: #e60023;">&#9679;</span>
+                                <span>Pinterest</span>
+                                <span class="gswc-screenshot-badge gswc-screenshot-active"><?php esc_html_e('Active', 'gtin-product-feed-for-google-shopping'); ?></span>
+                            </div>
+                            <div class="gswc-screenshot-channel">
+                                <span class="gswc-screenshot-icon" style="color: #000;">&#9679;</span>
+                                <span>TikTok</span>
+                                <span class="gswc-screenshot-badge gswc-screenshot-pending"><?php esc_html_e('Pending', 'gtin-product-feed-for-google-shopping'); ?></span>
+                            </div>
+                            <div class="gswc-screenshot-channel">
+                                <span class="gswc-screenshot-icon" style="color: #00809d;">&#9679;</span>
+                                <span>Bing Shopping</span>
+                                <span class="gswc-screenshot-badge gswc-screenshot-pending"><?php esc_html_e('Pending', 'gtin-product-feed-for-google-shopping'); ?></span>
+                            </div>
+                        </div>
+                        <div class="gswc-screenshot-schedule">
+                            <h4><?php esc_html_e('Auto-Update Schedule', 'gtin-product-feed-for-google-shopping'); ?></h4>
+                            <div class="gswc-screenshot-schedule-grid">
+                                <div class="gswc-screenshot-schedule-row">
+                                    <span><?php esc_html_e('Every 6 hours', 'gtin-product-feed-for-google-shopping'); ?></span>
+                                    <span class="gswc-screenshot-badge gswc-screenshot-active"><?php esc_html_e('Enabled', 'gtin-product-feed-for-google-shopping'); ?></span>
+                                </div>
+                                <div class="gswc-screenshot-schedule-row">
+                                    <span><?php esc_html_e('On product save', 'gtin-product-feed-for-google-shopping'); ?></span>
+                                    <span class="gswc-screenshot-badge gswc-screenshot-active"><?php esc_html_e('Enabled', 'gtin-product-feed-for-google-shopping'); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <p class="gswc-license-help">
-                    <?php
-                    printf(
-                        /* translators: %s: support email link */
-                        esc_html__('Lost your license key? %s', 'gtin-product-feed-for-google-shopping'),
-                        '<a href="mailto:support@wooplugin.pro">' . esc_html__('Contact support', 'gtin-product-feed-for-google-shopping') . '</a>'
-                    );
-                    ?>
-                </p>
             </div>
+
+            </div><!-- .gswc-license-grid -->
+
         </div>
         <?php
     }
@@ -484,6 +525,20 @@ class GSWC_Admin {
             update_user_meta($user_id, 'gswc_pro_notice_dismissed', '1');
         }
 
+        wp_send_json_success();
+    }
+
+    /**
+     * AJAX handler for dismissing dashboard promo
+     */
+    public static function ajax_dismiss_dashboard_promo() {
+        check_ajax_referer('gswc_dismiss_dashboard_promo', 'nonce');
+
+        if (!current_user_can('manage_woocommerce')) {
+            wp_send_json_error('Permission denied');
+        }
+
+        update_option('gswc_dashboard_promo_dismissed', '1');
         wp_send_json_success();
     }
 

@@ -57,6 +57,48 @@ $gswc_file_size = $gswc_feed_exists ? size_format(filesize($gswc_feed_file), 1) 
         <?php esc_html_e('for Google Shopping', 'gtin-product-feed-for-google-shopping'); ?>
     </h1>
 
+    <?php if (!get_option('gswc_dashboard_promo_dismissed')) : ?>
+        <?php
+        $gswc_promo_upgrade_url = add_query_arg([
+            'utm_source'   => 'plugin',
+            'utm_medium'   => 'dashboard-promo',
+            'utm_campaign' => 'free-to-pro',
+        ], 'https://wooplugin.pro/google-shopping-pro#pricing');
+        ?>
+        <div class="gswc-dashboard-promo-box" data-nonce="<?php echo esc_attr(wp_create_nonce('gswc_dismiss_dashboard_promo')); ?>">
+            <button type="button" class="gswc-dashboard-promo-dismiss" aria-label="<?php esc_attr_e('Dismiss', 'gtin-product-feed-for-google-shopping'); ?>">&times;</button>
+            <p class="gswc-dashboard-promo-heading">
+                <?php esc_html_e('Would you like to get more out of your product feeds? Upgrade to Pro and you will get:', 'gtin-product-feed-for-google-shopping'); ?>
+            </p>
+            <ul class="gswc-dashboard-promo-features">
+                <li>
+                    <?php esc_html_e('Scheduled auto-updates - keep your feed always fresh', 'gtin-product-feed-for-google-shopping'); ?>
+                    <a href="https://wooplugin.pro/docs/features/scheduled-updates" target="_blank"><?php esc_html_e('[Read more]', 'gtin-product-feed-for-google-shopping'); ?></a>
+                </li>
+                <li>
+                    <?php esc_html_e('Update on product save - feed updates automatically when you edit products', 'gtin-product-feed-for-google-shopping'); ?>
+                    <a href="https://wooplugin.pro/guides/automate-product-feeds-save-time" target="_blank"><?php esc_html_e('[Read more]', 'gtin-product-feed-for-google-shopping'); ?></a>
+                </li>
+                <li>
+                    <?php esc_html_e('Facebook, Pinterest, TikTok, Bing, Snapchat feed channels', 'gtin-product-feed-for-google-shopping'); ?>
+                    <a href="https://wooplugin.pro/docs/feeds/facebook-instagram" target="_blank"><?php esc_html_e('[Read more]', 'gtin-product-feed-for-google-shopping'); ?></a>
+                </li>
+                <li>
+                    <?php esc_html_e('Smart Auto-fill from product data', 'gtin-product-feed-for-google-shopping'); ?>
+                    <a href="https://wooplugin.pro/docs/features/smart-auto-fill" target="_blank"><?php esc_html_e('[Read more]', 'gtin-product-feed-for-google-shopping'); ?></a>
+                </li>
+                <li>
+                    <?php esc_html_e('Auto Category Mapping for Google product taxonomy', 'gtin-product-feed-for-google-shopping'); ?>
+                    <a href="https://wooplugin.pro/docs/features/category-mapping" target="_blank"><?php esc_html_e('[Read more]', 'gtin-product-feed-for-google-shopping'); ?></a>
+                </li>
+                <li><?php esc_html_e('1 year of updates & priority support', 'gtin-product-feed-for-google-shopping'); ?></li>
+            </ul>
+            <a href="<?php echo esc_url($gswc_promo_upgrade_url); ?>" class="button button-primary gswc-dashboard-promo-btn" target="_blank">
+                <?php esc_html_e('Upgrade to Pro', 'gtin-product-feed-for-google-shopping'); ?>
+            </a>
+        </div>
+    <?php endif; ?>
+
     <!-- Store Health Section -->
     <div class="gswc-health-section">
         <h2 class="gswc-health-title">

@@ -631,14 +631,81 @@
 /* ==========================================================================
    ========================================================================== */
 
-.gswc-dashboard-promo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 14px 20px;
-    border-radius: 8px;
+/* ==========================================================================
+   Dashboard Promo Box
+   ========================================================================== */
+
+.gswc-dashboard-promo-box {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-left: 4px solid #7c3aed;
+    border-radius: 4px;
+    padding: 20px 40px 20px 20px;
     margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.gswc-dashboard-promo-dismiss {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.gswc-dashboard-promo-dismiss:hover {
+    color: #374151;
+}
+
+.gswc-dashboard-promo-heading {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e1e1e;
+    margin: 0 0 12px 0;
+}
+
+.gswc-dashboard-promo-features {
+    list-style: none;
+    margin: 0 0 16px 0;
+    padding: 0;
+}
+
+.gswc-dashboard-promo-features li {
+    padding: 4px 0;
+    font-size: 13px;
+    color: #374151;
+}
+
+.gswc-dashboard-promo-features li::before {
+    content: "\2714";
+    color: #16a34a;
+    margin-right: 8px;
+}
+
+.gswc-dashboard-promo-features li a {
+    color: #4285f4;
+    text-decoration: none;
+    margin-left: 4px;
+}
+
+.gswc-dashboard-promo-features li a:hover {
+    text-decoration: underline;
+}
+
+.gswc-dashboard-promo-btn {
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+}
+
+.gswc-dashboard-promo-btn:hover {
+    background: #b91c1c !important;
+    border-color: #b91c1c !important;
 }
 
 /* ==========================================================================
@@ -1656,12 +1723,13 @@
 
 .gswc-pro-banner {
     background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     padding: 10px 20px;
     text-align: center;
     font-size: 13px;
     color: #444;
-    margin: -1px -20px 20px -20px;
+    margin: 0 20px 16px 0;
     box-sizing: border-box;
 }
 
@@ -1795,7 +1863,7 @@
     border-radius: 8px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     min-width: 260px;
-    max-width: calc(100vw - 40px);
+    max-width: 300px;
     z-index: 1000;
     padding: 8px 0;
 }
@@ -2051,14 +2119,128 @@
     color: #4b5563;
 }
 
+/* License Grid */
+.gswc-license-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.gswc-license-grid .gswc-upgrade-card {
+    margin-bottom: 0;
+}
+
+/* Screenshot Card */
+.gswc-screenshot-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.gswc-screenshot-card h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e1e1e;
+    margin: 0 0 16px 0;
+    border: none;
+    padding: 0;
+}
+
+.gswc-screenshot-browser {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.gswc-screenshot-dots {
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px;
+    background: #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.gswc-screenshot-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #d1d5db;
+}
+
+.gswc-screenshot-content {
+    padding: 16px;
+    background: #fafafa;
+}
+
+.gswc-screenshot-channels h4,
+.gswc-screenshot-schedule h4 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    margin: 0 0 10px 0;
+}
+
+.gswc-screenshot-channel,
+.gswc-screenshot-schedule-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #374151;
+}
+
+.gswc-screenshot-icon {
+    font-size: 10px;
+    flex-shrink: 0;
+}
+
+.gswc-screenshot-badge {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.gswc-screenshot-active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.gswc-screenshot-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.gswc-screenshot-schedule {
+    margin-top: 16px;
+}
+
+.gswc-screenshot-schedule-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+@media screen and (max-width: 900px) {
+    .gswc-license-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media screen and (max-width: 600px) {
     .gswc-upgrade-actions {
         flex-direction: column;
         align-items: flex-start;
-    }
-
-    .gswc-license-input-row {
-        flex-direction: column;
-        max-width: 100%;
     }
 }

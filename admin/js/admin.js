@@ -20,6 +20,7 @@
         initFeedToggle();
         initInlinePairPreview();
         initProNotice();
+        initDashboardPromo();
         initHelpDropdown();
     });
 
@@ -404,6 +405,35 @@
                 button.textContent = originalText;
             }, 2000);
         }
+    }
+
+    /**
+     * Initialize dashboard promo dismissal
+     */
+    function initDashboardPromo() {
+        var promo = document.querySelector('.gswc-dashboard-promo-box');
+        if (!promo) {
+            return;
+        }
+
+        var dismissBtn = promo.querySelector('.gswc-dashboard-promo-dismiss');
+        if (!dismissBtn) {
+            return;
+        }
+
+        dismissBtn.addEventListener('click', function () {
+            var formData = new FormData();
+            formData.append('action', 'gswc_dismiss_dashboard_promo');
+            formData.append('nonce', promo.dataset.nonce);
+
+            fetch(gswcFeed.ajaxUrl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: formData
+            });
+
+            promo.style.display = 'none';
+        });
     }
 
     /**
