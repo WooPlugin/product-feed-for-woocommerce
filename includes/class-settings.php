@@ -332,6 +332,122 @@ class GSWC_Settings {
     }
 
     /**
+     * Output inline pair field (two inputs side by side with example)
+     *
+     * @param array $field Field config.
+     */
+    public static function output_inline_pair($field) {
+        $title = $field['title'] ?? '';
+        $fields = $field['fields'] ?? [];
+        $example = $field['example'] ?? 'Product Name';
+
+        // Get current values for preview
+        $prefix_value = '';
+        $suffix_value = '';
+        $prefix_id = '';
+        $suffix_id = '';
+
+        foreach ($fields as $index => $subfield) {
+            $id = $subfield['id'] ?? '';
+            $value = get_option($id, $subfield['default'] ?? '');
+            if ($index === 0) {
+                $prefix_value = $value;
+                $prefix_id = $id;
+            } else {
+                $suffix_value = $value;
+                $suffix_id = $id;
+            }
+        }
+
+        echo '<div class="gswc-form-field">';
+        echo '<label class="gswc-field-label">' . esc_html($title) . '</label>';
+        echo '<div class="gswc-inline-pair">';
+
+        foreach ($fields as $subfield) {
+            $id = $subfield['id'] ?? '';
+            $label = $subfield['label'] ?? '';
+            $value = get_option($id, $subfield['default'] ?? '');
+
+            echo '<div class="gswc-inline-pair-field">';
+            echo '<label for="' . esc_attr($id) . '">' . esc_html($label) . '</label>';
+            echo '<div class="gswc-input-clearable">';
+            echo '<input type="text" name="' . esc_attr($id) . '" id="' . esc_attr($id) . '" value="' . esc_attr($value) . '" class="gswc-input-text gswc-inline-pair-input" data-prefix-id="' . esc_attr($prefix_id) . '" data-suffix-id="' . esc_attr($suffix_id) . '" />';
+            echo '<button type="button" class="gswc-input-clear" tabindex="-1">&times;</button>';
+            echo '</div>';
+            echo '</div>';
+        }
+
+        // Example preview
+        echo '<div class="gswc-inline-pair-example">';
+        echo '<label>' . esc_html__('Example', 'gtin-product-feed-for-google-shopping') . '</label>';
+        echo '<div class="gswc-example-preview" data-example="' . esc_attr($example) . '" data-prefix-id="' . esc_attr($prefix_id) . '" data-suffix-id="' . esc_attr($suffix_id) . '">';
+        $preview = trim($prefix_value . ' ' . $example . ' ' . $suffix_value);
+        echo esc_html($preview);
+        echo '</div>';
+        echo '</div>';
+
+        echo '</div>';
+        echo '</div>';
+    }
+
+    /**
+     * Output field row (multiple fields side by side)
+     *
+     * @param array $field Field config.
+     */
+    public static function output_field_row($field) {
+        $title = $field['title'] ?? '';
+        $fields = $field['fields'] ?? [];
+
+        echo '<div class="gswc-form-field">';
+        echo '<label class="gswc-field-label">' . esc_html($title) . '</label>';
+        echo '<div class="gswc-field-row">';
+
+        foreach ($fields as $subfield) {
+            $id = $subfield['id'] ?? '';
+            $label = $subfield['title'] ?? '';
+            $type = $subfield['type'] ?? 'text';
+            $value = get_option($id, $subfield['default'] ?? '');
+
+            echo '<div class="gswc-field-row-item">';
+            echo '<label for="' . esc_attr($id) . '">' . esc_html($label) . '</label>';
+
+            switch ($type) {
+                case 'multiselect':
+                    echo '<select name="' . esc_attr($id) . '[]" id="' . esc_attr($id) . '" multiple="multiple" class="wc-enhanced-select gswc-multiselect">';
+                    foreach ($subfield['options'] ?? [] as $opt_value => $opt_label) {
+                        $selected = is_array($value) && in_array($opt_value, $value, true) ? 'selected="selected"' : '';
+                        echo '<option value="' . esc_attr($opt_value) . '" ' . $selected . '>' . esc_html($opt_label) . '</option>';
+                    }
+                    echo '</select>';
+                    break;
+
+                case 'number':
+                    $min = $subfield['custom_attributes']['min'] ?? '';
+                    $step = $subfield['custom_attributes']['step'] ?? '';
+                    echo '<input type="number" name="' . esc_attr($id) . '" id="' . esc_attr($id) . '" value="' . esc_attr($value) . '" class="gswc-input-number"';
+                    if ($min !== '') {
+                        echo ' min="' . esc_attr($min) . '"';
+                    }
+                    if ($step !== '') {
+                        echo ' step="' . esc_attr($step) . '"';
+                    }
+                    echo ' />';
+                    break;
+
+                default:
+                    echo '<input type="text" name="' . esc_attr($id) . '" id="' . esc_attr($id) . '" value="' . esc_attr($value) . '" class="gswc-input-text" />';
+                    break;
+            }
+
+            echo '</div>';
+        }
+
+        echo '</div>';
+        echo '</div>';
+    }
+
+    /**
      * Handle settings save
      */
     public static function handle_settings_save() {
@@ -388,8 +504,45 @@ class GSWC_Settings {
             $type = $field['type'] ?? '';
             $id = $field['id'] ?? '';
 
-            // Skip special field types
-            if (in_array($type, ['title', 'sectionend'], true) || strpos($type, 'gswc_') === 0) {
+            // Skip special field types (except inline_pair which needs processing)
+            if (in_array($type, ['title', 'sectionend'], true)) {
+                continue;
+            }
+
+            // Handle inline pair fields
+            if ($type === 'gswc_inline_pair') {
+                foreach ($field['fields'] ?? [] as $subfield) {
+                    $subfield_id = $subfield['id'] ?? '';
+                    if ($subfield_id) {
+                        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                        $value = isset($_POST[$subfield_id]) ? sanitize_text_field(wp_unslash($_POST[$subfield_id])) : '';
+                        update_option($subfield_id, $value);
+                    }
+                }
+                continue;
+            }
+
+            // Handle field row (multiple fields in a row)
+            if ($type === 'gswc_field_row') {
+                foreach ($field['fields'] ?? [] as $subfield) {
+                    $subfield_id = $subfield['id'] ?? '';
+                    $subfield_type = $subfield['type'] ?? 'text';
+                    if ($subfield_id) {
+                        if ($subfield_type === 'multiselect') {
+                            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                            $value = isset($_POST[$subfield_id]) ? array_map('sanitize_text_field', wp_unslash($_POST[$subfield_id])) : [];
+                        } else {
+                            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                            $value = isset($_POST[$subfield_id]) ? sanitize_text_field(wp_unslash($_POST[$subfield_id])) : '';
+                        }
+                        update_option($subfield_id, $value);
+                    }
+                }
+                continue;
+            }
+
+            // Skip other custom field types
+            if (strpos($type, 'gswc_') === 0) {
                 continue;
             }
 
@@ -540,56 +693,51 @@ class GSWC_Settings {
 
         return [
             [
-                'title' => __('Product Filters', 'gtin-product-feed-for-google-shopping'),
-                'type'  => 'title',
-                'desc'  => __('Filter which products are included in feeds.', 'gtin-product-feed-for-google-shopping'),
-                'id'    => 'gswc_filters_section',
+                'title'  => __('Exclusions', 'gtin-product-feed-for-google-shopping'),
+                'type'   => 'gswc_field_row',
+                'fields' => [
+                    [
+                        'title'   => __('Exclude Categories', 'gtin-product-feed-for-google-shopping'),
+                        'id'      => 'gswc_feed_exclude_categories',
+                        'type'    => 'multiselect',
+                        'options' => $category_options,
+                        'default' => [],
+                    ],
+                    [
+                        'title'   => __('Exclude Tags', 'gtin-product-feed-for-google-shopping'),
+                        'id'      => 'gswc_feed_exclude_tags',
+                        'type'    => 'multiselect',
+                        'options' => $tag_options,
+                        'default' => [],
+                    ],
+                ],
             ],
             [
-                'title'   => __('Exclude Categories', 'gtin-product-feed-for-google-shopping'),
-                'desc'    => __('Products in these categories will be excluded from feeds.', 'gtin-product-feed-for-google-shopping'),
-                'id'      => 'gswc_feed_exclude_categories',
-                'type'    => 'multiselect',
-                'class'   => 'wc-enhanced-select',
-                'options' => $category_options,
-                'default' => [],
-            ],
-            [
-                'title'   => __('Exclude Tags', 'gtin-product-feed-for-google-shopping'),
-                'desc'    => __('Products with these tags will be excluded from feeds.', 'gtin-product-feed-for-google-shopping'),
-                'id'      => 'gswc_feed_exclude_tags',
-                'type'    => 'multiselect',
-                'class'   => 'wc-enhanced-select',
-                'options' => $tag_options,
-                'default' => [],
-            ],
-            [
-                'title'             => __('Minimum Price', 'gtin-product-feed-for-google-shopping'),
-                'desc'              => __('Exclude products below this price.', 'gtin-product-feed-for-google-shopping'),
-                'id'                => 'gswc_feed_min_price',
-                'type'              => 'number',
-                'default'           => '',
-                'custom_attributes' => ['min' => '0', 'step' => '0.01'],
-            ],
-            [
-                'title'             => __('Maximum Price', 'gtin-product-feed-for-google-shopping'),
-                'desc'              => __('Exclude products above this price.', 'gtin-product-feed-for-google-shopping'),
-                'id'                => 'gswc_feed_max_price',
-                'type'              => 'number',
-                'default'           => '',
-                'custom_attributes' => ['min' => '0', 'step' => '0.01'],
-            ],
-            [
-                'title'             => __('Product Limit', 'gtin-product-feed-for-google-shopping'),
-                'desc'              => __('Maximum number of products to include (0 for unlimited).', 'gtin-product-feed-for-google-shopping'),
-                'id'                => 'gswc_feed_limit',
-                'type'              => 'number',
-                'default'           => 0,
-                'custom_attributes' => ['min' => '0'],
-            ],
-            [
-                'type' => 'sectionend',
-                'id'   => 'gswc_filters_section',
+                'title'  => __('Price', 'gtin-product-feed-for-google-shopping'),
+                'type'   => 'gswc_field_row',
+                'fields' => [
+                    [
+                        'title'             => __('Minimum Price', 'gtin-product-feed-for-google-shopping'),
+                        'id'                => 'gswc_feed_min_price',
+                        'type'              => 'number',
+                        'default'           => '',
+                        'custom_attributes' => ['min' => '0', 'step' => '0.01'],
+                    ],
+                    [
+                        'title'             => __('Maximum Price', 'gtin-product-feed-for-google-shopping'),
+                        'id'                => 'gswc_feed_max_price',
+                        'type'              => 'number',
+                        'default'           => '',
+                        'custom_attributes' => ['min' => '0', 'step' => '0.01'],
+                    ],
+                    [
+                        'title'             => __('Product Limit', 'gtin-product-feed-for-google-shopping'),
+                        'id'                => 'gswc_feed_limit',
+                        'type'              => 'number',
+                        'default'           => 0,
+                        'custom_attributes' => ['min' => '0'],
+                    ],
+                ],
             ],
         ];
     }
@@ -602,52 +750,38 @@ class GSWC_Settings {
     private static function get_customize_settings() {
         return [
             [
-                'title' => __('Title Customization', 'gtin-product-feed-for-google-shopping'),
-                'type'  => 'title',
-                'desc'  => __('Add prefix or suffix to product titles in feeds.', 'gtin-product-feed-for-google-shopping'),
-                'id'    => 'gswc_title_customize',
+                'title'   => __('Title', 'gtin-product-feed-for-google-shopping'),
+                'type'    => 'gswc_inline_pair',
+                'example' => __('Blue T-Shirt', 'gtin-product-feed-for-google-shopping'),
+                'fields'  => [
+                    [
+                        'label'   => __('Prefix', 'gtin-product-feed-for-google-shopping'),
+                        'id'      => 'gswc_feed_title_prefix',
+                        'default' => '',
+                    ],
+                    [
+                        'label'   => __('Suffix', 'gtin-product-feed-for-google-shopping'),
+                        'id'      => 'gswc_feed_title_suffix',
+                        'default' => '',
+                    ],
+                ],
             ],
             [
-                'title'   => __('Title Prefix', 'gtin-product-feed-for-google-shopping'),
-                'desc'    => __('Text to add before product titles.', 'gtin-product-feed-for-google-shopping'),
-                'id'      => 'gswc_feed_title_prefix',
-                'type'    => 'text',
-                'default' => '',
-            ],
-            [
-                'title'   => __('Title Suffix', 'gtin-product-feed-for-google-shopping'),
-                'desc'    => __('Text to add after product titles.', 'gtin-product-feed-for-google-shopping'),
-                'id'      => 'gswc_feed_title_suffix',
-                'type'    => 'text',
-                'default' => '',
-            ],
-            [
-                'type' => 'sectionend',
-                'id'   => 'gswc_title_customize',
-            ],
-            [
-                'title' => __('Description Customization', 'gtin-product-feed-for-google-shopping'),
-                'type'  => 'title',
-                'desc'  => __('Add prefix or suffix to product descriptions in feeds.', 'gtin-product-feed-for-google-shopping'),
-                'id'    => 'gswc_desc_customize',
-            ],
-            [
-                'title'   => __('Description Prefix', 'gtin-product-feed-for-google-shopping'),
-                'desc'    => __('Text to add before product descriptions.', 'gtin-product-feed-for-google-shopping'),
-                'id'      => 'gswc_feed_desc_prefix',
-                'type'    => 'text',
-                'default' => '',
-            ],
-            [
-                'title'   => __('Description Suffix', 'gtin-product-feed-for-google-shopping'),
-                'desc'    => __('Text to add after product descriptions.', 'gtin-product-feed-for-google-shopping'),
-                'id'      => 'gswc_feed_desc_suffix',
-                'type'    => 'text',
-                'default' => '',
-            ],
-            [
-                'type' => 'sectionend',
-                'id'   => 'gswc_desc_customize',
+                'title'   => __('Description', 'gtin-product-feed-for-google-shopping'),
+                'type'    => 'gswc_inline_pair',
+                'example' => __('Comfortable cotton t-shirt...', 'gtin-product-feed-for-google-shopping'),
+                'fields'  => [
+                    [
+                        'label'   => __('Prefix', 'gtin-product-feed-for-google-shopping'),
+                        'id'      => 'gswc_feed_desc_prefix',
+                        'default' => '',
+                    ],
+                    [
+                        'label'   => __('Suffix', 'gtin-product-feed-for-google-shopping'),
+                        'id'      => 'gswc_feed_desc_suffix',
+                        'default' => '',
+                    ],
+                ],
             ],
         ];
     }

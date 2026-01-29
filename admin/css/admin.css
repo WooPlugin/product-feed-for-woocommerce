@@ -982,6 +982,30 @@
     text-decoration: underline;
 }
 
+.gswc-widget-disabled {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.gswc-widget-disabled .dashicons {
+    color: #9ca3af;
+}
+
+.gswc-widget-disabled a {
+    color: #4285f4;
+    text-decoration: none;
+    margin-left: auto;
+}
+
+.gswc-widget-disabled a:hover {
+    text-decoration: underline;
+}
+
 .gswc-widget-stat-label {
     display: block;
     font-size: 11px;
@@ -1092,6 +1116,110 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+}
+
+.gswc-inline-pair {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.gswc-inline-pair-field {
+    flex: 0 0 180px;
+}
+
+.gswc-inline-pair-field label,
+.gswc-inline-pair-example label {
+    display: block;
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.gswc-inline-pair-field .gswc-input-text {
+    width: 100%;
+    max-width: none;
+}
+
+.gswc-input-clearable {
+    position: relative;
+    display: flex;
+}
+
+.gswc-input-clearable .gswc-input-text {
+    padding-right: 32px;
+}
+
+.gswc-input-clear {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: #9ca3af;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: none;
+}
+
+.gswc-input-clear.visible {
+    display: block;
+}
+
+.gswc-input-clear:hover {
+    color: #6b7280;
+}
+
+.gswc-inline-pair-example {
+    flex: 1;
+    min-width: 200px;
+}
+
+.gswc-example-preview {
+    padding: 8px 12px;
+    background: #f9fafb;
+    border: 1px dashed #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #374151;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+}
+
+/* Field Row - multiple fields side by side */
+.gswc-field-row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.gswc-field-row-item {
+    flex: 1;
+    min-width: 0;
+}
+
+.gswc-field-row-item label {
+    display: block;
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.gswc-field-row-item .gswc-input-text,
+.gswc-field-row-item .gswc-input-number,
+.gswc-field-row-item .gswc-multiselect {
+    width: 100%;
+    max-width: none;
+}
+
+.gswc-field-row-item .gswc-multiselect {
+    min-width: 200px;
 }
 
 .gswc-input-text,

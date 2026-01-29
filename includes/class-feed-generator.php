@@ -20,6 +20,7 @@ class GSWC_Feed_Generator {
     public static function init() {
         add_action('gswc_generate_cron', [__CLASS__, 'generate']);
         add_action('wp_ajax_gswc_generate_feed', [__CLASS__, 'ajax_generate']);
+        add_action('wp_ajax_gswc_toggle_feed', [__CLASS__, 'ajax_toggle_feed']);
     }
 
     /**
@@ -66,18 +67,68 @@ class GSWC_Feed_Generator {
         $result = self::generate();
 
         if (is_wp_error($result)) {
-            wp_send_json_error($result->get_error_message());
+            $error_message = $result->get_error_message();
+
+            // Store last action for dashboard display
+            set_transient('gswc_last_action', [
+                'type'    => 'error',
+                'message' => $error_message,
+                'time'    => time(),
+            ], 60);
+
+            wp_send_json_error($error_message);
         }
 
+        $message = sprintf(
+            /* translators: %d: number of products */
+            __('Feed generated with %d products.', 'gtin-product-feed-for-google-shopping'),
+            $result['count']
+        );
+
+        // Store last action for dashboard display
+        set_transient('gswc_last_action', [
+            'type'    => 'success',
+            'message' => $message,
+            'time'    => time(),
+        ], 60);
+
         wp_send_json_success([
-            'message' => sprintf(
-                /* translators: %d: number of products */
-                __('Feed generated with %d products.', 'gtin-product-feed-for-google-shopping'),
-                $result['count']
-            ),
+            'message' => $message,
             'url'     => self::get_feed_url('google'),
             'count'   => $result['count'],
             'timeago' => __('just now', 'gtin-product-feed-for-google-shopping'),
+        ]);
+    }
+
+    /**
+     * AJAX handler for toggling feed enabled/disabled
+     */
+    public static function ajax_toggle_feed() {
+        check_ajax_referer('gswc_feed_nonce', 'nonce');
+
+        if (!current_user_can('manage_woocommerce')) {
+            wp_send_json_error(__('Permission denied.', 'gtin-product-feed-for-google-shopping'));
+        }
+
+        $enabled = isset($_POST['enabled']) && $_POST['enabled'] === 'true';
+        update_option('gswc_feed_enabled', $enabled ? 'yes' : 'no');
+
+        // If disabling, delete the feed file
+        if (!$enabled) {
+            $feed_file = self::get_feed_path('google');
+            if (file_exists($feed_file)) {
+                wp_delete_file($feed_file);
+            }
+            // Clear stats
+            update_option('gswc_feed_last_generated', 0);
+            update_option('gswc_feed_product_count', 0);
+        }
+
+        wp_send_json_success([
+            'enabled' => $enabled,
+            'message' => $enabled
+                ? __('Feed enabled.', 'gtin-product-feed-for-google-shopping')
+                : __('Feed disabled and removed.', 'gtin-product-feed-for-google-shopping'),
         ]);
     }
 
@@ -87,6 +138,12 @@ class GSWC_Feed_Generator {
      * @return array|WP_Error
      */
     public static function generate() {
+        // Check if feed is enabled
+        $feed_enabled = get_option('gswc_feed_enabled', 'yes');
+        if ($feed_enabled !== 'yes') {
+            return new WP_Error('feed_disabled', __('Feed is disabled.', 'gtin-product-feed-for-google-shopping'));
+        }
+
         $feed_dir = self::get_feed_dir();
         if (!file_exists($feed_dir)) {
             wp_mkdir_p($feed_dir);
@@ -96,12 +153,9 @@ class GSWC_Feed_Generator {
         $products = self::get_products();
 
         // Generate Google feed
-        $google_enabled = get_option('gswc_feed_google_enabled', 'yes');
-        if ($google_enabled === 'yes') {
-            $result = self::generate_google_feed($products);
-            if (is_wp_error($result)) {
-                return $result;
-            }
+        $result = self::generate_google_feed($products);
+        if (is_wp_error($result)) {
+            return $result;
         }
 
         $count = count($products);

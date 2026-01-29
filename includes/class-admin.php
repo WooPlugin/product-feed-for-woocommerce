@@ -233,6 +233,7 @@ class GSWC_Admin {
         $feed_file = GSWC_Feed_Generator::get_feed_path('google');
         $feed_url = GSWC_Feed_Generator::get_feed_url('google');
         $feed_exists = file_exists($feed_file);
+        $feed_enabled = get_option('gswc_feed_enabled', 'yes') === 'yes';
         $last_generated = get_option('gswc_feed_last_generated', 0);
         $product_count = get_option('gswc_feed_product_count', 0);
 
@@ -253,71 +254,81 @@ class GSWC_Admin {
 
         ?>
         <div class="gswc-widget">
-            <div class="gswc-widget-stats">
-                <div class="gswc-widget-stat">
-                    <span class="gswc-widget-stat-value"><?php echo esc_html($product_count ?: '—'); ?></span>
-                    <span class="gswc-widget-stat-label"><?php esc_html_e('Products', 'gtin-product-feed-for-google-shopping'); ?></span>
+            <?php if (!$feed_enabled) : ?>
+                <div class="gswc-widget-disabled">
+                    <span class="dashicons dashicons-warning"></span>
+                    <?php esc_html_e('Feed is disabled.', 'gtin-product-feed-for-google-shopping'); ?>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=gswc-feeds')); ?>">
+                        <?php esc_html_e('Enable it', 'gtin-product-feed-for-google-shopping'); ?>
+                    </a>
                 </div>
-                <div class="gswc-widget-stat">
-                    <span class="gswc-widget-stat-value <?php echo $feed_exists ? 'status-ok' : 'status-none'; ?>">
-                        <?php echo $feed_exists ? '✓' : '—'; ?>
-                    </span>
-                    <span class="gswc-widget-stat-label"><?php esc_html_e('Feed', 'gtin-product-feed-for-google-shopping'); ?></span>
+            <?php else : ?>
+                <div class="gswc-widget-stats">
+                    <div class="gswc-widget-stat">
+                        <span class="gswc-widget-stat-value"><?php echo esc_html($product_count ?: '—'); ?></span>
+                        <span class="gswc-widget-stat-label"><?php esc_html_e('Products', 'gtin-product-feed-for-google-shopping'); ?></span>
+                    </div>
+                    <div class="gswc-widget-stat">
+                        <span class="gswc-widget-stat-value <?php echo $feed_exists ? 'status-ok' : 'status-none'; ?>">
+                            <?php echo $feed_exists ? '✓' : '—'; ?>
+                        </span>
+                        <span class="gswc-widget-stat-label"><?php esc_html_e('Feed', 'gtin-product-feed-for-google-shopping'); ?></span>
+                    </div>
+                    <div class="gswc-widget-stat">
+                        <span class="gswc-widget-stat-value gswc-widget-stat-time">
+                            <?php
+                            if ($last_generated) {
+                                echo esc_html(human_time_diff($last_generated, time()));
+                            } else {
+                                echo '—';
+                            }
+                            ?>
+                        </span>
+                        <span class="gswc-widget-stat-label"><?php esc_html_e('Last Update', 'gtin-product-feed-for-google-shopping'); ?></span>
+                    </div>
                 </div>
-                <div class="gswc-widget-stat">
-                    <span class="gswc-widget-stat-value gswc-widget-stat-time">
-                        <?php
-                        if ($last_generated) {
-                            echo esc_html(human_time_diff($last_generated, time()));
-                        } else {
-                            echo '—';
-                        }
-                        ?>
-                    </span>
-                    <span class="gswc-widget-stat-label"><?php esc_html_e('Last Update', 'gtin-product-feed-for-google-shopping'); ?></span>
-                </div>
-            </div>
 
-            <?php if ($products_changed > 0) : ?>
-                <div class="gswc-widget-stale">
-                    <span class="gswc-widget-stale-icon">⚠️</span>
-                    <span class="gswc-widget-stale-text">
-                        <?php
-                        printf(
-                            /* translators: %d: number of products */
-                            esc_html(_n(
-                                '%d product changed since last feed update',
-                                '%d products changed since last feed update',
-                                $products_changed,
-                                'gtin-product-feed-for-google-shopping'
-                            )),
-                            (int) $products_changed
-                        );
-                        ?>
-                    </span>
-                </div>
-            <?php endif; ?>
+                <?php if ($products_changed > 0) : ?>
+                    <div class="gswc-widget-stale">
+                        <span class="gswc-widget-stale-icon">⚠️</span>
+                        <span class="gswc-widget-stale-text">
+                            <?php
+                            printf(
+                                /* translators: %d: number of products */
+                                esc_html(_n(
+                                    '%d product changed since last feed update',
+                                    '%d products changed since last feed update',
+                                    $products_changed,
+                                    'gtin-product-feed-for-google-shopping'
+                                )),
+                                (int) $products_changed
+                            );
+                            ?>
+                        </span>
+                    </div>
+                <?php endif; ?>
 
-            <?php if ($feed_exists) : ?>
-                <div class="gswc-widget-url">
-                    <input type="text" value="<?php echo esc_url($feed_url); ?>" readonly onclick="this.select();" />
-                    <button type="button" class="button gswc-widget-copy" data-url="<?php echo esc_url($feed_url); ?>">
-                        <?php esc_html_e('Copy', 'gtin-product-feed-for-google-shopping'); ?>
+                <?php if ($feed_exists) : ?>
+                    <div class="gswc-widget-url">
+                        <input type="text" value="<?php echo esc_url($feed_url); ?>" readonly onclick="this.select();" />
+                        <button type="button" class="button gswc-widget-copy" data-url="<?php echo esc_url($feed_url); ?>">
+                            <?php esc_html_e('Copy', 'gtin-product-feed-for-google-shopping'); ?>
+                        </button>
+                    </div>
+                <?php endif; ?>
+
+                <div class="gswc-widget-actions">
+                    <button type="button" id="gswc-widget-generate" class="button button-primary">
+                        <?php $feed_exists ? esc_html_e('Regenerate Feed', 'gtin-product-feed-for-google-shopping') : esc_html_e('Generate Feed', 'gtin-product-feed-for-google-shopping'); ?>
                     </button>
+                    <span id="gswc-widget-spinner" class="spinner"></span>
+                    <span id="gswc-widget-result"></span>
+
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=gswc-dashboard')); ?>" class="gswc-widget-settings">
+                        <?php esc_html_e('Settings', 'gtin-product-feed-for-google-shopping'); ?> →
+                    </a>
                 </div>
             <?php endif; ?>
-
-            <div class="gswc-widget-actions">
-                <button type="button" id="gswc-widget-generate" class="button button-primary">
-                    <?php $feed_exists ? esc_html_e('Regenerate Feed', 'gtin-product-feed-for-google-shopping') : esc_html_e('Generate Feed', 'gtin-product-feed-for-google-shopping'); ?>
-                </button>
-                <span id="gswc-widget-spinner" class="spinner"></span>
-                <span id="gswc-widget-result"></span>
-
-                <a href="<?php echo esc_url(admin_url('admin.php?page=gswc-feeds')); ?>" class="gswc-widget-settings">
-                    <?php esc_html_e('Settings', 'gtin-product-feed-for-google-shopping'); ?> →
-                </a>
-            </div>
         </div>
         <?php
     }

@@ -176,7 +176,7 @@ $gswc_file_size = $gswc_feed_exists ? size_format(filesize($gswc_feed_file), 1) 
                         <span class="gswc-action-label"><?php esc_html_e('Regenerate Feed', 'gtin-product-feed-for-google-shopping'); ?></span>
                     </button>
 
-                    <a href="<?php echo esc_url(admin_url('admin.php?page=gswc-feeds')); ?>" class="gswc-action-item">
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=gswc-general')); ?>" class="gswc-action-item">
                         <span class="gswc-action-icon dashicons dashicons-admin-generic"></span>
                         <span class="gswc-action-label"><?php esc_html_e('Settings', 'gtin-product-feed-for-google-shopping'); ?></span>
                     </a>
@@ -194,9 +194,15 @@ $gswc_file_size = $gswc_feed_exists ? size_format(filesize($gswc_feed_file), 1) 
                     <?php endif; ?>
                 </div>
 
+                <?php
+                $last_action = get_transient('gswc_last_action');
+                if ($last_action) {
+                    delete_transient('gswc_last_action');
+                }
+                ?>
                 <div class="gswc-spinner-wrapper">
                     <span id="gswc-feed-spinner" class="spinner"></span>
-                    <span id="gswc-feed-result"></span>
+                    <span id="gswc-feed-result" class="<?php echo $last_action ? esc_attr($last_action['type']) : ''; ?>"><?php echo $last_action ? esc_html($last_action['message']) : ''; ?></span>
                 </div>
 
                 <?php if ($gswc_missing_gtin > 0) : ?>

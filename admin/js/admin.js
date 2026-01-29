@@ -17,6 +17,8 @@
         initWidgetGenerateFeed();
         initCopyUrl();
         initWidgetCopy();
+        initFeedToggle();
+        initInlinePairPreview();
     });
 
     /**
@@ -215,6 +217,138 @@
             button.addEventListener('click', function () {
                 copyToClipboard(button.dataset.url, button);
             });
+        });
+    }
+
+    /**
+     * Initialize inline pair preview (live update as user types)
+     */
+    function initInlinePairPreview() {
+        var inputs = document.querySelectorAll('.gswc-inline-pair-input');
+
+        inputs.forEach(function (input) {
+            // Update preview and clear button visibility on input
+            input.addEventListener('input', function () {
+                updateInlinePairPreview(input);
+                updateClearButtonVisibility(input);
+            });
+
+            // Initial visibility check
+            updateClearButtonVisibility(input);
+        });
+
+        // Clear buttons
+        var clearButtons = document.querySelectorAll('.gswc-input-clear');
+        clearButtons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = btn.previousElementSibling;
+                if (input && input.tagName === 'INPUT') {
+                    input.value = '';
+                    input.focus();
+                    updateClearButtonVisibility(input);
+                    // Trigger input event to update preview
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            });
+        });
+    }
+
+    /**
+     * Show/hide clear button based on input value
+     *
+     * @param {HTMLInputElement} input The input element
+     */
+    function updateClearButtonVisibility(input) {
+        var clearBtn = input.nextElementSibling;
+        if (clearBtn && clearBtn.classList.contains('gswc-input-clear')) {
+            if (input.value.trim()) {
+                clearBtn.classList.add('visible');
+            } else {
+                clearBtn.classList.remove('visible');
+            }
+        }
+    }
+
+    /**
+     * Update the example preview for inline pair fields
+     *
+     * @param {HTMLInputElement} input The input that changed
+     */
+    function updateInlinePairPreview(input) {
+        var prefixId = input.dataset.prefixId;
+        var suffixId = input.dataset.suffixId;
+
+        // Find the preview element in the same row
+        var row = input.closest('.gswc-inline-pair');
+        if (!row) return;
+
+        var preview = row.querySelector('.gswc-example-preview');
+        if (!preview) return;
+
+        var example = preview.dataset.example || '';
+        var prefixInput = document.getElementById(prefixId);
+        var suffixInput = document.getElementById(suffixId);
+
+        var prefix = prefixInput ? prefixInput.value.trim() : '';
+        var suffix = suffixInput ? suffixInput.value.trim() : '';
+
+        var parts = [];
+        if (prefix) parts.push(prefix);
+        parts.push(example);
+        if (suffix) parts.push(suffix);
+
+        preview.textContent = parts.join(' ');
+    }
+
+    /**
+     * Initialize feed toggle auto-save
+     */
+    function initFeedToggle() {
+        var toggle = document.querySelector('.gswc-toggle-switch input[name="gswc_feed_enabled"]');
+        if (!toggle) {
+            return;
+        }
+
+        toggle.addEventListener('change', function () {
+            var enabled = toggle.checked;
+            var card = toggle.closest('.gswc-feed-channel-card');
+            var statusBadge = card ? card.querySelector('.gswc-feed-status-badge') : null;
+
+            // Disable toggle during save
+            toggle.disabled = true;
+
+            // Make AJAX request
+            var formData = new FormData();
+            formData.append('action', 'gswc_toggle_feed');
+            formData.append('nonce', gswcFeed.nonce);
+            formData.append('enabled', enabled ? 'true' : 'false');
+
+            fetch(gswcFeed.ajaxUrl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: formData
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (data.success) {
+                        // Reload page to update UI properly
+                        window.location.reload();
+                    } else {
+                        // Revert toggle on error
+                        toggle.checked = !enabled;
+                        alert(data.data || 'Error saving setting');
+                    }
+                })
+                .catch(function (error) {
+                    // Revert toggle on error
+                    toggle.checked = !enabled;
+                    alert('Error: ' + error.message);
+                })
+                .finally(function () {
+                    toggle.disabled = false;
+                });
         });
     }
 
