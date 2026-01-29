@@ -162,7 +162,7 @@ $gswc_file_size = $gswc_feed_exists ? size_format(filesize($gswc_feed_file), 1) 
                             <button type="button" class="button button-small gswc-copy-url" data-url="<?php echo esc_attr($gswc_feed_url); ?>">
                                 <?php esc_html_e('Copy', 'gtin-product-feed-for-google-shopping'); ?>
                             </button>
-                            <a href="<?php echo esc_url($gswc_feed_url); ?>" target="_blank" class="button button-small" title="<?php esc_attr_e('Open feed', 'gtin-product-feed-for-google-shopping'); ?>">
+                            <a href="<?php echo esc_url($gswc_feed_url); ?>" target="_blank" class="button button-small">
                                 <?php esc_html_e('Open', 'gtin-product-feed-for-google-shopping'); ?>
                             </a>
                         </div>
@@ -223,17 +223,6 @@ $gswc_file_size = $gswc_feed_exists ? size_format(filesize($gswc_feed_file), 1) 
                         <span class="gswc-action-label"><?php esc_html_e('Settings', 'gtin-product-feed-for-google-shopping'); ?></span>
                     </a>
 
-                    <button type="button" class="gswc-action-item gswc-copy-url" data-url="<?php echo esc_attr($gswc_feed_url); ?>">
-                        <span class="gswc-action-icon dashicons dashicons-admin-page"></span>
-                        <span class="gswc-action-label"><?php esc_html_e('Copy URL', 'gtin-product-feed-for-google-shopping'); ?></span>
-                    </button>
-
-                    <?php if ($gswc_feed_exists) : ?>
-                        <a href="<?php echo esc_url($gswc_feed_url); ?>" target="_blank" class="gswc-action-item">
-                            <span class="gswc-action-icon dashicons dashicons-external"></span>
-                            <span class="gswc-action-label"><?php esc_html_e('Open Feed', 'gtin-product-feed-for-google-shopping'); ?></span>
-                        </a>
-                    <?php endif; ?>
                 </div>
 
                 <?php
