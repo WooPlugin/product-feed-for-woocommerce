@@ -87,12 +87,12 @@ class GSWC_Admin {
     public static function add_menu() {
         // Top-level menu
         add_menu_page(
-            __('GTIN Product Feed', 'gtin-product-feed-for-google-shopping'),
-            __('GTIN Product Feed', 'gtin-product-feed-for-google-shopping'),
+            __('Product Feed', 'gtin-product-feed-for-google-shopping'),
+            __('Product Feed', 'gtin-product-feed-for-google-shopping'),
             'manage_woocommerce',
             'gswc-dashboard',
             [__CLASS__, 'render_dashboard'],
-            'dashicons-rss',
+            GSWC_PLUGIN_URL . 'admin/images/menu-icon.png',
             56
         );
 

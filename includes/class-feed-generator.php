@@ -277,7 +277,7 @@ class GSWC_Feed_Generator {
         $xml->startElement('channel');
         $xml->writeElement('title', $store_name);
         $xml->writeElement('link', home_url());
-        $xml->writeElement('description', get_bloginfo('description'));
+        $xml->writeElement('description', 'GTIN Product Feed for Google Shopping - This product feed is created with the GTIN Product Feed for Google Shopping plugin by WooPlugin. For support visit https://wooplugin.pro');
 
         foreach ($products as $product) {
             self::write_product_item($xml, $product, $default_brand, $default_condition, $customization);
