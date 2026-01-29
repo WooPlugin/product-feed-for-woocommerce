@@ -61,11 +61,17 @@
      * @param {HTMLElement} result The result message element
      */
     function generateFeed(button, spinner, result) {
-        var originalText = button.textContent;
+        // Get original text - check for action item label first
+        var labelSpan = button.querySelector('.gswc-action-label');
+        var originalText = labelSpan ? labelSpan.textContent : button.textContent;
 
         // Disable button and show spinner
         button.disabled = true;
-        button.textContent = gswcFeed.strings.generating;
+        if (labelSpan) {
+            labelSpan.textContent = gswcFeed.strings.generating;
+        } else {
+            button.textContent = gswcFeed.strings.generating;
+        }
         if (spinner) {
             spinner.classList.add('is-active');
         }
@@ -118,7 +124,11 @@
             })
             .finally(function () {
                 button.disabled = false;
-                button.textContent = originalText;
+                if (labelSpan) {
+                    labelSpan.textContent = originalText;
+                } else {
+                    button.textContent = originalText;
+                }
                 if (spinner) {
                     spinner.classList.remove('is-active');
                 }
@@ -215,7 +225,9 @@
      * @param {HTMLButtonElement} button Button to update with feedback
      */
     function copyToClipboard(text, button) {
-        var originalText = button.textContent;
+        // Get original text - check for action item label first
+        var labelSpan = button.querySelector('.gswc-action-label');
+        var originalText = labelSpan ? labelSpan.textContent : button.textContent;
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text).then(function () {
@@ -243,10 +255,19 @@
      * @param {string} originalText Original button text
      */
     function showCopyFeedback(button, originalText) {
-        button.textContent = 'Copied!';
-        setTimeout(function () {
-            button.textContent = originalText;
-        }, 2000);
+        // For action items, update the label span
+        var labelSpan = button.querySelector('.gswc-action-label');
+        if (labelSpan) {
+            labelSpan.textContent = 'Copied!';
+            setTimeout(function () {
+                labelSpan.textContent = originalText;
+            }, 2000);
+        } else {
+            button.textContent = 'Copied!';
+            setTimeout(function () {
+                button.textContent = originalText;
+            }, 2000);
+        }
     }
 
     /**
