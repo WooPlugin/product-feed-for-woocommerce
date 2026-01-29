@@ -61,6 +61,15 @@ class GSWC_Settings {
         // Get current page for navigation highlighting
         $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : 'gswc-general';
 
+        // Page titles
+        $page_titles = [
+            'gswc-general'    => __('General', 'gtin-product-feed-for-google-shopping'),
+            'gswc-feeds'      => __('Feeds', 'gtin-product-feed-for-google-shopping'),
+            'gswc-filters'    => __('Filters', 'gtin-product-feed-for-google-shopping'),
+            'gswc-customize' => __('Customization', 'gtin-product-feed-for-google-shopping'),
+        ];
+        $page_title = $page_titles[$page] ?? __('Settings', 'gtin-product-feed-for-google-shopping');
+
         // Show save notice
         if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Settings saved.', 'gtin-product-feed-for-google-shopping') . '</p></div>';
@@ -75,6 +84,8 @@ class GSWC_Settings {
 
             <div class="gswc-settings-wrapper">
                 <div class="gswc-settings-main">
+                    <h2 class="gswc-page-title"><?php echo esc_html($page_title); ?></h2>
+
                     <div class="gswc-content-card">
                     <?php if ($page === 'gswc-feeds') : ?>
                         <?php self::render_feeds_page_content(); ?>

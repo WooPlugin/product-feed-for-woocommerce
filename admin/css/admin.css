@@ -1044,12 +1044,20 @@
    ========================================================================== */
 
 .gswc-settings-wrapper {
-    max-width: 900px;
+    max-width: 100%;
     margin-top: 20px;
 }
 
 .gswc-settings-main {
     min-width: 0;
+}
+
+/* Page Title */
+.gswc-page-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    color: #1e1e1e;
 }
 
 /* Content Card */
@@ -1090,8 +1098,8 @@
 .gswc-input-number,
 .gswc-select,
 .gswc-multiselect {
-    width: 400px;
-    max-width: 100%;
+    width: 100%;
+    max-width: 500px;
     padding: 8px 12px;
     font-size: 14px;
     border: 1px solid #ddd;
