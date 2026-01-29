@@ -5,7 +5,7 @@ Tags: google shopping, product feed, woocommerce feed, google merchant center, g
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -178,6 +178,13 @@ Pro: Scheduled updates, auto-sync on product changes, multi-channel feeds, prior
 6. Generated XML feed preview showing Google-compliant product data
 
 == Changelog ==
+
+= 1.0.3 =
+* Fix documentation and support links
+* Fix header icon to match WooPlugin branding
+* Fix multiselect dropdowns on Filters page (Select2 + save)
+* Remove redundant dashboard footer
+* Enqueue WooCommerce enhanced select on plugin pages
 
 = 1.0.2 =
 * Redesign settings to match Pro structure (7 tabs)
