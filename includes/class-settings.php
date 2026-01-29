@@ -61,32 +61,6 @@ class GSWC_Settings {
         // Get current page for navigation highlighting
         $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : 'gswc-general';
 
-        // Section definitions with labels and icons
-        $sections = [
-            'gswc-general'    => [
-                'label' => __('General', 'gtin-product-feed-for-google-shopping'),
-                'icon' => 'dashicons-admin-generic',
-                'desc' => __('Configure basic feed settings and defaults', 'gtin-product-feed-for-google-shopping'),
-            ],
-            'gswc-feeds'      => [
-                'label' => __('Feeds', 'gtin-product-feed-for-google-shopping'),
-                'icon' => 'dashicons-rss',
-                'desc' => __('Manage feed channels and generation options', 'gtin-product-feed-for-google-shopping'),
-            ],
-            'gswc-filters'    => [
-                'label' => __('Filters', 'gtin-product-feed-for-google-shopping'),
-                'icon' => 'dashicons-filter',
-                'desc' => __('Filter which products appear in your feed', 'gtin-product-feed-for-google-shopping'),
-            ],
-            'gswc-customize' => [
-                'label' => __('Customize', 'gtin-product-feed-for-google-shopping'),
-                'icon' => 'dashicons-edit',
-                'desc' => __('Customize product titles and descriptions', 'gtin-product-feed-for-google-shopping'),
-            ],
-        ];
-
-        $current_section_data = $sections[$page] ?? $sections['gswc-general'];
-
         // Show save notice
         if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Settings saved.', 'gtin-product-feed-for-google-shopping') . '</p></div>';
@@ -94,35 +68,7 @@ class GSWC_Settings {
 
         ?>
         <div class="gswc-settings-wrapper">
-            <!-- Sidebar Navigation -->
-            <aside class="gswc-settings-sidebar">
-                <nav class="gswc-settings-nav">
-                    <?php foreach ($sections as $slug => $section) : ?>
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=' . $slug)); ?>"
-                           class="gswc-nav-item <?php echo $page === $slug ? 'active' : ''; ?>">
-                            <span class="gswc-nav-icon dashicons <?php echo esc_attr($section['icon']); ?>"></span>
-                            <span class="gswc-nav-label"><?php echo esc_html($section['label']); ?></span>
-                        </a>
-                    <?php endforeach; ?>
-                </nav>
-
-                <div class="gswc-sidebar-footer">
-                    <a href="https://woocommerce.com/documentation/google-product-feed-for-woocommerce/" target="_blank" class="gswc-help-link">
-                        <span class="dashicons dashicons-editor-help"></span>
-                        <?php esc_html_e('Help & Documentation', 'gtin-product-feed-for-google-shopping'); ?>
-                    </a>
-                </div>
-            </aside>
-
-            <!-- Main Content -->
-            <main class="gswc-settings-main">
-                <div class="gswc-content-header">
-                    <h1 class="gswc-page-title"><?php echo esc_html($current_section_data['label']); ?></h1>
-                    <?php if ($current_section_data['desc']) : ?>
-                        <p class="gswc-page-description"><?php echo esc_html($current_section_data['desc']); ?></p>
-                    <?php endif; ?>
-                </div>
-
+            <div class="gswc-settings-main">
                 <div class="gswc-content-card">
                     <?php if ($page === 'gswc-feeds') : ?>
                         <?php self::render_feeds_page_content(); ?>
@@ -149,7 +95,7 @@ class GSWC_Settings {
                         </form>
                     <?php endif; ?>
                 </div>
-            </main>
+            </div>
         </div>
         <?php
     }
