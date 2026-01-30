@@ -504,11 +504,11 @@ class GSWC_Admin {
      */
     public static function add_screen_ids($screen_ids) {
         $screen_ids[] = 'toplevel_page_gswc-dashboard';
-        $screen_ids[] = 'gtin-product-feed_page_gswc-general';
-        $screen_ids[] = 'gtin-product-feed_page_gswc-feeds';
-        $screen_ids[] = 'gtin-product-feed_page_gswc-filters';
-        $screen_ids[] = 'gtin-product-feed_page_gswc-customize';
-        $screen_ids[] = 'gtin-product-feed_page_gswc-license';
+        $screen_ids[] = 'product-feed_page_gswc-general';
+        $screen_ids[] = 'product-feed_page_gswc-feeds';
+        $screen_ids[] = 'product-feed_page_gswc-filters';
+        $screen_ids[] = 'product-feed_page_gswc-customize';
+        $screen_ids[] = 'product-feed_page_gswc-license';
         return $screen_ids;
     }
 
