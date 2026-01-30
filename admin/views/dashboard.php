@@ -184,14 +184,14 @@ $gswc_file_size = $gswc_feed_exists ? size_format(filesize($gswc_feed_file), 1) 
                 </div>
 
                 <?php
-                $last_action = get_transient('gswc_last_action');
-                if ($last_action) {
+                $gswc_last_action = get_transient('gswc_last_action');
+                if ($gswc_last_action) {
                     delete_transient('gswc_last_action');
                 }
                 ?>
                 <div class="gswc-spinner-wrapper">
                     <span id="gswc-feed-spinner" class="spinner"></span>
-                    <span id="gswc-feed-result" class="<?php echo $last_action ? esc_attr($last_action['type']) : ''; ?>"><?php echo $last_action ? esc_html($last_action['message']) : ''; ?></span>
+                    <span id="gswc-feed-result" class="<?php echo $gswc_last_action ? esc_attr($gswc_last_action['type']) : ''; ?>"><?php echo $gswc_last_action ? esc_html($gswc_last_action['message']) : ''; ?></span>
                 </div>
 
                 <?php if ($gswc_missing_gtin > 0) : ?>

@@ -59,6 +59,7 @@ class GSWC_Settings {
         self::$current_section = $current_section;
 
         // Get current page for navigation highlighting
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : 'gswc-general';
 
         // Page titles
@@ -71,6 +72,7 @@ class GSWC_Settings {
         $page_title = $page_titles[$page] ?? __('Settings', 'gtin-product-feed-for-google-shopping');
 
         // Show save notice
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Settings saved.', 'gtin-product-feed-for-google-shopping') . '</p></div>';
         }

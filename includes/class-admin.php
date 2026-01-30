@@ -517,6 +517,7 @@ class GSWC_Admin {
      */
     public static function render_settings_page() {
         // Get current page slug
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : 'gswc-general';
 
         // Map page slug to section ID

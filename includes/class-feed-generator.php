@@ -291,8 +291,13 @@ class GSWC_Feed_Generator {
         $content = $xml->outputMemory();
         $file = self::get_feed_path('google');
 
-        $result = file_put_contents($file, $content);
-        if ($result === false) {
+        global $wp_filesystem;
+        if (empty($wp_filesystem)) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            WP_Filesystem();
+        }
+        $result = $wp_filesystem->put_contents($file, $content, FS_CHMOD_FILE);
+        if (!$result) {
             return new WP_Error('write_error', __('Failed to write feed file.', 'gtin-product-feed-for-google-shopping'));
         }
 

@@ -94,7 +94,12 @@ function gswc_activate() {
     // Add .htaccess to protect feed directory (allow XML access)
     $htaccess = $feed_dir . '/.htaccess';
     if (!file_exists($htaccess)) {
-        file_put_contents($htaccess, "Options -Indexes\n");
+        global $wp_filesystem;
+        if (empty($wp_filesystem)) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            WP_Filesystem();
+        }
+        $wp_filesystem->put_contents($htaccess, "Options -Indexes\n", FS_CHMOD_FILE);
     }
 
     // Record installation time for review notice
