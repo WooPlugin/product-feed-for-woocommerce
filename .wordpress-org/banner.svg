@@ -1,0 +1,20 @@
+<svg width="1544" height="500" viewBox="0 0 1544 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <rect width="1544" height="500" fill="#7f54b3"/>
+
+  <!-- Subtle pattern -->
+  <circle cx="100" cy="250" r="300" fill="white" opacity="0.03"/>
+  <circle cx="1444" cy="250" r="300" fill="white" opacity="0.03"/>
+
+  <!-- Zap icon -->
+  <g transform="translate(200, 170) scale(6.5)" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9">
+    <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+  </g>
+
+  <!-- Text -->
+  <text x="450" y="220" font-family="system-ui, -apple-system, BlinkMacSystemFont, sans-serif" font-size="56" font-weight="700" fill="white">Product Feed</text>
+  <text x="450" y="290" font-family="system-ui, -apple-system, BlinkMacSystemFont, sans-serif" font-size="36" fill="white" opacity="0.9">for WooCommerce</text>
+
+  <!-- Tagline -->
+  <text x="450" y="380" font-family="system-ui, -apple-system, BlinkMacSystemFont, sans-serif" font-size="24" fill="white" opacity="0.7">Google Shopping feeds made simple</text>
+</svg>

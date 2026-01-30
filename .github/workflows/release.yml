@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create plugin ZIP
+        run: |
+          mkdir -p build/gtin-product-feed-for-google-shopping
+          rsync -av --exclude='.git' \
+                    --exclude='.github' \
+                    --exclude='.wordpress-org' \
+                    --exclude='.gitignore' \
+                    --exclude='composer.json' \
+                    --exclude='composer.lock' \
+                    --exclude='phpcs.xml' \
+                    --exclude='phpunit.xml' \
+                    --exclude='tests' \
+                    --exclude='node_modules' \
+                    --exclude='.DS_Store' \
+                    ./ build/gtin-product-feed-for-google-shopping/
+          cd build
+          zip -r gtin-product-feed-for-google-shopping.zip gtin-product-feed-for-google-shopping
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/gtin-product-feed-for-google-shopping.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
